@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Digital Album</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #0f1114;
+  --surface: #181b20;
+  --accent: #e8a045;
+  --text: #c8c3bc;
+  --dim: #5e5a55;
+}
+html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); font-family:'Barlow',sans-serif; color:var(--text); }
+#slider { display:flex; width:100%; height:calc(100vh - 42px); margin-top:42px; transition:transform .65s cubic-bezier(.77,0,.18,1); }
+.slide  { min-width:100vw; height:calc(100vh - 42px); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+
+/* COVER */
+#slide-0 { background:radial-gradient(ellipse at 60% 50%,#1e2229 0%,#0f1114 70%); flex-direction:column; }
+.cover-eyebrow { font-size:.7rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent); margin-bottom:.8rem; animation:up .6s .3s both; }
+.cover-title   { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,13vw,11rem); line-height:.92; text-align:center; color:#fff; animation:up .8s .5s both; }
+.cover-title span { color:var(--accent); }
+.cover-sub { font-size:.8rem; color:var(--dim); letter-spacing:.12em; text-transform:uppercase; margin-top:1.4rem; animation:up .6s .8s both; }
+
+/* PERSON SLIDE */
+.person-slide { display:grid; grid-template-columns:1fr 1fr; width:100%; height:100%; }
+
+.photo-half { position:relative; overflow:hidden; background:var(--surface); }
+.photo-half::after { content:''; position:absolute; inset:0; background:linear-gradient(to right,transparent 55%,var(--bg) 100%); pointer-events:none; }
+.photo-upload-area { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6rem; cursor:pointer; transition:background .2s; position:relative; }
+.photo-upload-area:hover { background:#1e2229; }
+.photo-upload-area svg { opacity:.22; }
+.upload-hint { font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--dim); }
+.photo-upload-area img.preview { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center; }
+input[type=file] { display:none; }
+
+.info-half { display:flex; flex-direction:column; justify-content:center; padding:4rem 3rem 4rem 2.5rem; z-index:1; }
+.slide-num { font-size:.62rem; letter-spacing:.35em; text-transform:uppercase; color:var(--accent); margin-bottom:.9rem; }
+.p-name    { font-family:'Bebas Neue',sans-serif; font-size:clamp(3.2rem,7vw,5.5rem); line-height:.95; color:#fff; margin-bottom:.25rem; }
+.p-role    { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-bottom:1.4rem; }
+.p-line    { width:32px; height:2px; background:var(--accent); margin-bottom:1.2rem; }
+.p-bio     { font-size:clamp(.85rem,1.4vw,.97rem); line-height:1.85; color:var(--text); max-width:380px; font-weight:300; }
+
+.chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:1.4rem; }
+.chip  { background:rgba(232,160,69,.08); border:1px solid rgba(232,160,69,.22); color:var(--accent); border-radius:3px; padding:.22rem .65rem; font-size:.66rem; letter-spacing:.07em; text-transform:uppercase; }
+
+/* TOP BAR */
+#topbar { position:fixed; top:0; left:0; right:0; height:42px; background:rgba(15,17,20,.92); backdrop-filter:blur(12px); border-bottom:1px solid rgba(232,160,69,.15); display:flex; align-items:center; justify-content:space-between; padding:0 1.4rem; z-index:200; }
+#topbar-left { display:flex; align-items:center; gap:.8rem; }
+#topbar-title { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:#fff; letter-spacing:.12em; }
+#topbar-sub { font-size:.58rem; color:var(--dim); letter-spacing:.18em; text-transform:uppercase; }
+#topbar-right { display:flex; align-items:center; gap:.6rem; }
+#video-upload-btn { display:flex; align-items:center; gap:.4rem; background:rgba(232,160,69,.08); border:1px solid rgba(232,160,69,.25); color:var(--accent); border-radius:4px; padding:.28rem .7rem; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:background .2s; font-family:'Barlow',sans-serif; }
+#video-upload-btn:hover { background:rgba(232,160,69,.18); }
+#play-btn { position:relative; display:flex; align-items:center; gap:.45rem; background:var(--accent); color:#0f1114; border:none; border-radius:4px; padding:.3rem .85rem; font-size:.62rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; font-family:'Barlow',sans-serif; transition:transform .15s,box-shadow .15s; box-shadow:0 0 14px rgba(232,160,69,.35); overflow:hidden; }
+#play-btn:hover { transform:scale(1.04); box-shadow:0 0 22px rgba(232,160,69,.55); }
+#play-pulse { position:absolute; inset:0; background:rgba(255,255,255,.15); border-radius:4px; animation:pulse 2s ease-in-out infinite; pointer-events:none; }
+@keyframes pulse { 0%,100%{opacity:0} 50%{opacity:1} }
+#vid-player { position:fixed; bottom:3.5rem; right:1.5rem; width:300px; background:#181b20; border:1px solid rgba(232,160,69,.3); border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,.6); z-index:300; overflow:hidden; }
+#vid-header { display:flex; align-items:center; justify-content:space-between; padding:.5rem .8rem; background:rgba(232,160,69,.08); border-bottom:1px solid rgba(232,160,69,.15); cursor:grab; user-select:none; }
+#vid-header:active { cursor:grabbing; }
+#vid-title { font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+.vid-ctrl { background:none; border:none; color:var(--dim); cursor:pointer; font-size:.85rem; padding:.1rem .3rem; border-radius:3px; transition:color .2s,background .2s; }
+.vid-ctrl:hover { color:#fff; background:rgba(255,255,255,.08); }
+#vid-body { position:relative; min-height:80px; }
+#vid-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; padding:1rem; }
+#vid-placeholder p { font-size:.65rem; color:var(--dim); text-align:center; }
+
+/* ABOUT ME SLIDE */
+.aboutme-slide { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:2vh 5vw; width:100%; height:100vh; box-sizing:border-box; z-index:1; }
+.am-header { margin-bottom:1vh; width:100%; max-width:900px; }
+.am-sections { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; width:100%; max-width:900px; }
+.am-section { background:rgba(255,255,255,.03); border:1px solid rgba(232,160,69,.12); border-radius:6px; padding:.65rem 1rem; }
+.am-label { font-size:.58rem; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:.25rem; }
+.am-text { font-size:clamp(.72rem,1vw,.85rem); line-height:1.6; color:var(--text); font-weight:300; }
+.am-sections .am-section:last-child:nth-child(odd) { grid-column:1/-1; }
+
+.am-routine { display:flex; flex-direction:column; gap:.3rem; margin-top:.3rem; }
+.am-day { display:flex; align-items:center; gap:.6rem; }
+.am-day-label { font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); min-width:52px; font-weight:600; }
+.am-day-val { font-size:.78rem; color:var(--text); }
+
+@media(max-width:640px){
+  .aboutme-slide{padding:1rem 1rem 3.5rem;justify-content:flex-start;overflow-y:auto;height:auto;}
+  .am-sections{grid-template-columns:1fr;}
+  .am-sections .am-section:last-child:nth-child(odd){grid-column:auto;}
+}
+
+.arrow { position:fixed; top:0; width:70px; height:100vh; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:100; opacity:0; transition:opacity .2s; background:transparent; border:none; outline:none; }
+#arrow-left  { left:0; }
+#arrow-right { right:0; }
+.arrow svg { width:36px; height:36px; fill:none; stroke:var(--accent); stroke-width:2.2; filter:drop-shadow(0 0 8px rgba(232,160,69,.6)); pointer-events:none; }
+
+/* DOTS */
+#indicator { position:fixed; bottom:1.6rem; left:50%; transform:translateX(-50%); display:flex; gap:.45rem; z-index:100; }
+.dot { width:5px; height:5px; border-radius:50%; background:#2a2d32; transition:background .3s,transform .3s; cursor:pointer; }
+.dot.active { background:var(--accent); transform:scale(1.5); }
+
+@keyframes up { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+@media(max-width:640px){
+  .person-slide{grid-template-columns:1fr;grid-template-rows:38vh 1fr;}
+  .photo-half::after{background:linear-gradient(to bottom,transparent 55%,var(--bg) 100%);}
+  .info-half{padding:1.2rem 1.4rem 3.5rem;overflow-y:auto;}
+  .arrow{width:44px;}
+}
+</style>
+</head>
+<body>
+
+<div id="slider">
+
+  <!-- COVER -->
+  <div class="slide" id="slide-0">
+    <div style="text-align:center;position:relative;z-index:1">
+      <p class="cover-eyebrow">Peter · Lima, Perú · 2025</p>
+      <h1 class="cover-title">MY<br><span>DIGITAL</span><br>ALBUM</h1>
+      <p class="cover-sub">Lima, Perú · 2025</p>
+    </div>
+  </div>
+
+  <!-- PETER -->
+  <div class="slide" id="slide-1">
+    <div class="person-slide">
+      <div class="photo-half">
+        <label class="photo-upload-area" for="f-peter">
+          <img class="preview" id="p-peter" src="peter.png">
+          <input type="file" id="f-peter" accept="image/*" onchange="setPhoto(this,'p-peter')">
+        </label>
+      </div>
+      <div class="info-half">
+        <p class="slide-num">01 / 06</p>
+        <h2 class="p-name">Peter</h2>
+        <p class="p-role">Software Engineering Student</p>
+        <div class="p-line"></div>
+        <p class="p-bio">I am thin and I have straight black hair. I wear glasses. I go to classes from Monday to Thursday and take an English course on Saturdays.</p>
+        <div class="chips">
+          <span class="chip">💻 Dev</span>
+          <span class="chip">🇬🇧 English Sat</span>
+          <span class="chip">🎮 Gamer Sun</span>
+          <span class="chip">📚 UAP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PETER ABOUT ME -->
+  <div class="slide" id="slide-about">
+    <div class="aboutme-slide">
+      <div class="am-header">
+        <p class="slide-num" style="color:var(--accent);font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;margin-bottom:.5rem;">ABOUT ME</p>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,6vw,5rem);color:#fff;line-height:.95;">Peter<span style="color:var(--accent);">.</span></h2>
+        <div style="width:32px;height:2px;background:var(--accent);margin:.8rem 0;"></div>
+      </div>
+      <div class="am-sections">
+        <div class="am-section">
+          <p class="am-label">👋 Presentation</p>
+          <p class="am-text">Hi! My name is Peter. I am 21 years old. I live in Villa El Salvador, Lima, Peru. Welcome to my digital album.</p>
+        </div>
+        <div class="am-section">
+          <p class="am-label">🎓 Personal Information</p>
+          <div class="chips" style="margin-top:.2rem;">
+            <span class="chip">💻 Software Engineering</span>
+            <span class="chip">🏫 UAP</span>
+            <span class="chip">🔄 5th Cycle</span>
+            <span class="chip">⭐ Creative</span>
+            <span class="chip">🔍 Curious</span>
+            <span class="chip">💪 Hardworking</span>
+          </div>
+        </div>
+        <div class="am-section">
+          <p class="am-label">🧍 Physical Appearance</p>
+          <div class="chips" style="margin-top:.2rem;">
+            <span class="chip">🧍 Thin</span>
+            <span class="chip">🖤 Straight black hair</span>
+            <span class="chip">👓 Glasses</span>
+          </div>
+        </div>
+        <div class="am-section">
+          <p class="am-label">📅 Daily Routine</p>
+          <div class="am-routine">
+            <div class="am-day"><span class="am-day-label">Mon–Thu</span><span class="am-day-val">📚 In-person classes</span></div>
+            <div class="am-day"><span class="am-day-label">Fri</span><span class="am-day-val">🔬 New technologies</span></div>
+            <div class="am-day"><span class="am-day-label">Sat</span><span class="am-day-val">🇬🇧 English course</span></div>
+            <div class="am-day"><span class="am-day-label">Sun</span><span class="am-day-val">🎮 Games & series</span></div>
+          </div>
+        </div>
+        <div class="am-section" style="grid-column:1/-1;">
+          <p class="am-label">🎮 Hobbies</p>
+          <div class="chips" style="margin-top:.2rem;">
+            <span class="chip">🎮 Video games</span>
+            <span class="chip">📺 Series</span>
+            <span class="chip">💻 Tech research</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANA -->
+  <div class="slide" id="slide-2">
+    <div class="person-slide">
+      <div class="photo-half">
+        <label class="photo-upload-area" for="f-ana">
+          <img class="preview" id="p-ana" src="ana.png">
+          <input type="file" id="f-ana" accept="image/*" onchange="setPhoto(this,'p-ana')">
+        </label>
+      </div>
+      <div class="info-half">
+        <p class="slide-num">02 / 06</p>
+        <h2 class="p-name">Ana</h2>
+        <p class="p-role">Mother · Nurse</p>
+        <div class="p-line"></div>
+        <p class="p-bio">She has long straight black hair and brown eyes. She works at Hospital San José from Monday to Friday. On Saturdays she cooks for the family.</p>
+        <div class="chips">
+          <span class="chip">🏥 San José</span>
+          <span class="chip">🍚 Cooks Sat</span>
+          <span class="chip">📺 Soap Operas Sun</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LUIS -->
+  <div class="slide" id="slide-3">
+    <div class="person-slide">
+      <div class="photo-half">
+        <label class="photo-upload-area" for="f-luis">
+          <img class="preview" id="p-luis" src="luis.png">
+          <input type="file" id="f-luis" accept="image/*" onchange="setPhoto(this,'p-luis')">
+        </label>
+      </div>
+      <div class="info-half">
+        <p class="slide-num">03 / 06</p>
+        <h2 class="p-name">Luis</h2>
+        <p class="p-role">Father · Security Guard</p>
+        <div class="p-line"></div>
+        <p class="p-bio">He is tall and strong with short black hair and a mustache. He works at a bank from Monday to Saturday. On Sundays he watches soccer and plays with friends.</p>
+        <div class="chips">
+          <span class="chip">🏦 Bank Guard</span>
+          <span class="chip">⚽ Soccer Sun</span>
+          <span class="chip">💪 Strong</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALENTINA -->
+  <div class="slide" id="slide-4">
+    <div class="person-slide">
+      <div class="photo-half">
+        <label class="photo-upload-area" for="f-valentina">
+          <img class="preview" id="p-valentina" src="valentina.png">
+          <input type="file" id="f-valentina" accept="image/*" onchange="setPhoto(this,'p-valentina')">
+        </label>
+      </div>
+      <div class="info-half">
+        <p class="slide-num">04 / 06</p>
+        <h2 class="p-name">Valentina</h2>
+        <p class="p-role">Sister · 15 years old</p>
+        <div class="p-line"></div>
+        <p class="p-bio">She has long straight brown hair and big brown eyes. She goes to school from Monday to Friday. On weekends she goes out with her friends.</p>
+        <div class="chips">
+          <span class="chip">🏫 4th Grade</span>
+          <span class="chip">👭 Friends on weekends</span>
+          <span class="chip">🌟 15 yrs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARLOS -->
+  <div class="slide" id="slide-5">
+    <div class="person-slide">
+      <div class="photo-half">
+        <label class="photo-upload-area" for="f-carlos">
+          <img class="preview" id="p-carlos" src="carlos.png">
+          <input type="file" id="f-carlos" accept="image/*" onchange="setPhoto(this,'p-carlos')">
+        </label>
+      </div>
+      <div class="info-half">
+        <p class="slide-num">05 / 06</p>
+        <h2 class="p-name">Carlos</h2>
+        <p class="p-role">Older Brother · 30 years old</p>
+        <div class="p-line"></div>
+        <p class="p-bio">He is tall with short black hair. He studies psychology and has his own barbershop. On Sundays he plays soccer with my father.</p>
+        <div class="chips">
+          <span class="chip">🧠 Psychology</span>
+          <span class="chip">✂️ Barbershop</span>
+          <span class="chip">⚽ Soccer Sun</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVIER -->
+  <div class="slide" id="slide-6">
+    <div class="person-slide">
+      <div class="photo-half">
+        <label class="photo-upload-area" for="f-javier">
+          <img class="preview" id="p-javier" src="javier.png">
+          <input type="file" id="f-javier" accept="image/*" onchange="setPhoto(this,'p-javier')">
+        </label>
+      </div>
+      <div class="info-half">
+        <p class="slide-num">06 / 06</p>
+        <h2 class="p-name">Javier</h2>
+        <p class="p-role">Friend · Civil Engineering</p>
+        <div class="p-line"></div>
+        <p class="p-bio">He is Venezuelan, dark-skinned, thin, with short black hair. He studies at my university. On Sundays he calls his family in Venezuela by video call.</p>
+        <div class="chips">
+          <span class="chip">🇻🇪 Caracas</span>
+          <span class="chip">🏗️ Civil Eng</span>
+          <span class="chip">📹 Calls Sun</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="topbar-left">
+    <span id="topbar-title">MY DIGITAL ALBUM</span>
+    <span id="topbar-sub">Peter · Lima, Perú · 2025</span>
+  </div>
+  <div id="topbar-right">
+    <button id="play-btn" onclick="togglePlayer()" title="Open video player">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span id="play-btn-label">Play Video</span>
+      <span id="play-pulse"></span>
+    </button>
+  </div>
+</div>
+
+<!-- FLOATING VIDEO PLAYER -->
+<div id="vid-player" style="display:none;">
+  <div id="vid-header">
+    <span id="vid-title">📹 My Video</span>
+    <div style="display:flex;gap:.4rem;align-items:center;">
+      <button class="vid-ctrl" onclick="minimizePlayer()" title="Minimize">─</button>
+      <button class="vid-ctrl" onclick="closePlayer()" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="vid-body">
+    <video id="vid-el" controls playsinline src="video.mp4" style="width:100%;border-radius:0 0 10px 10px;display:block;background:#000;"></video>
+  </div>
+</div>
+
+<!-- ARROWS -->
+<button class="arrow" id="arrow-left"  onclick="go(-1)" aria-label="Previous">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+<button class="arrow" id="arrow-right" onclick="go(1)"  aria-label="Next">
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+</button>
+
+<div id="indicator"></div>
+
+<script>
+const TOTAL = 8;
+let current = 0;
+const slider = document.getElementById('slider');
+const arrowL = document.getElementById('arrow-left');
+const arrowR = document.getElementById('arrow-right');
+const ind    = document.getElementById('indicator');
+
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = () => goTo(i);
+  ind.appendChild(d);
+}
+
+function goTo(i) {
+  if (i < 0 || i >= TOTAL) return;
+  current = i;
+  slider.style.transform = `translateX(-${current*100}vw)`;
+  document.querySelectorAll('.dot').forEach((d,j) => d.classList.toggle('active', j===current));
+  updateArrows();
+}
+function go(d) { goTo(current+d); }
+
+function updateArrows(x) {
+  arrowL.style.opacity = current > 0         ? '1' : '0';
+  arrowR.style.opacity = current < TOTAL - 1 ? '1' : '0';
+}
+
+arrowL.style.opacity = '0';
+arrowR.style.opacity = '1';
+
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight') go(1);
+  if (e.key==='ArrowLeft')  go(-1);
+});
+
+let tx = null;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  if (tx===null) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) go(dx<0?1:-1);
+  tx = null;
+});
+
+// VIDEO PLAYER
+const vidPlayer = document.getElementById('vid-player');
+const vidEl = document.getElementById('vid-el');
+const playBtnLabel = document.getElementById('play-btn-label');
+let playerOpen = false;
+
+function togglePlayer() {
+  playerOpen = !playerOpen;
+  vidPlayer.style.display = playerOpen ? 'block' : 'none';
+  playBtnLabel.textContent = playerOpen ? 'Hide Video' : 'Play Video';
+  if (playerOpen) vidEl.play();
+}
+function minimizePlayer() {
+  playerOpen = false;
+  vidPlayer.style.display = 'none';
+  playBtnLabel.textContent = 'Play Video';
+  vidEl.pause();
+}
+function closePlayer() { minimizePlayer(); }
+
+// DRAG
+let dragging = false, dragOffX = 0, dragOffY = 0;
+document.getElementById('vid-header').addEventListener('mousedown', e => {
+  dragging = true;
+  const r = vidPlayer.getBoundingClientRect();
+  dragOffX = e.clientX - r.left;
+  dragOffY = e.clientY - r.top;
+  vidPlayer.style.right = 'auto';
+  vidPlayer.style.bottom = 'auto';
+});
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  vidPlayer.style.left = (e.clientX - dragOffX) + 'px';
+  vidPlayer.style.top  = (e.clientY - dragOffY) + 'px';
+});
+document.addEventListener('mouseup', () => { dragging = false; });
+document.getElementById('vid-header').addEventListener('touchstart', e => {
+  dragging = true;
+  const r = vidPlayer.getBoundingClientRect();
+  dragOffX = e.touches[0].clientX - r.left;
+  dragOffY = e.touches[0].clientY - r.top;
+  vidPlayer.style.right = 'auto'; vidPlayer.style.bottom = 'auto';
+}, {passive:true});
+document.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  vidPlayer.style.left = (e.touches[0].clientX - dragOffX) + 'px';
+  vidPlayer.style.top  = (e.touches[0].clientY - dragOffY) + 'px';
+}, {passive:true});
+document.addEventListener('touchend', () => { dragging = false; });
+
+function setPhoto(input, pid) {
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = document.getElementById(pid);
+    img.src = ev.target.result;
+    img.style.display = 'block';
+  };
+  r.readAsDataURL(input.files[0]);
+}
+</script>
+</body>
+</html>
