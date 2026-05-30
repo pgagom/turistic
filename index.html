@@ -3,122 +3,318 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Digital Album</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+<title>My Digital Album — Peter</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-:root {
-  --bg: #0f1114;
-  --surface: #181b20;
-  --accent: #e8a045;
-  --text: #c8c3bc;
-  --dim: #5e5a55;
-}
-html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); font-family:'Barlow',sans-serif; color:var(--text); }
-#slider { display:flex; width:100%; height:calc(100vh - 42px); margin-top:42px; transition:transform .65s cubic-bezier(.77,0,.18,1); }
-.slide  { min-width:100vw; height:calc(100vh - 42px); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
-/* COVER */
-#slide-0 { background:radial-gradient(ellipse at 60% 50%,#1e2229 0%,#0f1114 70%); flex-direction:column; }
-.cover-eyebrow { font-size:.7rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent); margin-bottom:.8rem; animation:up .6s .3s both; }
-.cover-title   { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,13vw,11rem); line-height:.92; text-align:center; color:#fff; animation:up .8s .5s both; }
-.cover-title span { color:var(--accent); }
-.cover-sub { font-size:.8rem; color:var(--dim); letter-spacing:.12em; text-transform:uppercase; margin-top:1.4rem; animation:up .6s .8s both; }
-
-/* PERSON SLIDE */
-.person-slide { display:grid; grid-template-columns:1fr 1fr; width:100%; height:100%; }
-
-.photo-half { position:relative; overflow:hidden; background:var(--surface); }
-.photo-half::after { content:''; position:absolute; inset:0; background:linear-gradient(to right,transparent 55%,var(--bg) 100%); pointer-events:none; }
-.photo-upload-area { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6rem; cursor:pointer; transition:background .2s; position:relative; }
-.photo-upload-area:hover { background:#1e2229; }
-.photo-upload-area svg { opacity:.22; }
-.upload-hint { font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--dim); }
-.photo-upload-area img.preview { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center; }
-input[type=file] { display:none; }
-
-.info-half { display:flex; flex-direction:column; justify-content:center; padding:4rem 3rem 4rem 2.5rem; z-index:1; }
-.slide-num { font-size:.62rem; letter-spacing:.35em; text-transform:uppercase; color:var(--accent); margin-bottom:.9rem; }
-.p-name    { font-family:'Bebas Neue',sans-serif; font-size:clamp(3.2rem,7vw,5.5rem); line-height:.95; color:#fff; margin-bottom:.25rem; }
-.p-role    { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-bottom:1.4rem; }
-.p-line    { width:32px; height:2px; background:var(--accent); margin-bottom:1.2rem; }
-.p-bio     { font-size:clamp(.85rem,1.4vw,.97rem); line-height:1.85; color:var(--text); max-width:380px; font-weight:300; }
-
-.chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:1.4rem; }
-.chip  { background:rgba(232,160,69,.08); border:1px solid rgba(232,160,69,.22); color:var(--accent); border-radius:3px; padding:.22rem .65rem; font-size:.66rem; letter-spacing:.07em; text-transform:uppercase; }
-
-/* TOP BAR */
-#topbar { position:fixed; top:0; left:0; right:0; height:42px; background:rgba(15,17,20,.92); backdrop-filter:blur(12px); border-bottom:1px solid rgba(232,160,69,.15); display:flex; align-items:center; justify-content:space-between; padding:0 1.4rem; z-index:200; }
-#topbar-left { display:flex; align-items:center; gap:.8rem; }
-#topbar-title { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:#fff; letter-spacing:.12em; }
-#topbar-sub { font-size:.58rem; color:var(--dim); letter-spacing:.18em; text-transform:uppercase; }
-#topbar-right { display:flex; align-items:center; gap:.6rem; }
-#video-upload-btn { display:flex; align-items:center; gap:.4rem; background:rgba(232,160,69,.08); border:1px solid rgba(232,160,69,.25); color:var(--accent); border-radius:4px; padding:.28rem .7rem; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:background .2s; font-family:'Barlow',sans-serif; }
-#video-upload-btn:hover { background:rgba(232,160,69,.18); }
-#play-btn { position:relative; display:flex; align-items:center; gap:.45rem; background:var(--accent); color:#0f1114; border:none; border-radius:4px; padding:.3rem .85rem; font-size:.62rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; font-family:'Barlow',sans-serif; transition:transform .15s,box-shadow .15s; box-shadow:0 0 14px rgba(232,160,69,.35); overflow:hidden; }
-#play-btn:hover { transform:scale(1.04); box-shadow:0 0 22px rgba(232,160,69,.55); }
-#play-pulse { position:absolute; inset:0; background:rgba(255,255,255,.15); border-radius:4px; animation:pulse 2s ease-in-out infinite; pointer-events:none; }
-@keyframes pulse { 0%,100%{opacity:0} 50%{opacity:1} }
-#vid-player { position:fixed; bottom:3.5rem; right:1.5rem; width:300px; background:#181b20; border:1px solid rgba(232,160,69,.3); border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,.6); z-index:300; overflow:hidden; }
-#vid-header { display:flex; align-items:center; justify-content:space-between; padding:.5rem .8rem; background:rgba(232,160,69,.08); border-bottom:1px solid rgba(232,160,69,.15); cursor:grab; user-select:none; }
-#vid-header:active { cursor:grabbing; }
-#vid-title { font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
-.vid-ctrl { background:none; border:none; color:var(--dim); cursor:pointer; font-size:.85rem; padding:.1rem .3rem; border-radius:3px; transition:color .2s,background .2s; }
-.vid-ctrl:hover { color:#fff; background:rgba(255,255,255,.08); }
-#vid-body { position:relative; min-height:80px; }
-#vid-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; padding:1rem; }
-#vid-placeholder p { font-size:.65rem; color:var(--dim); text-align:center; }
-
-/* ABOUT ME SLIDE */
-.aboutme-slide { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:2vh 5vw; width:100%; height:100vh; box-sizing:border-box; z-index:1; }
-.am-header { margin-bottom:1vh; width:100%; max-width:900px; }
-.am-sections { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; width:100%; max-width:900px; }
-.am-section { background:rgba(255,255,255,.03); border:1px solid rgba(232,160,69,.12); border-radius:6px; padding:.65rem 1rem; }
-.am-label { font-size:.58rem; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:.25rem; }
-.am-text { font-size:clamp(.72rem,1vw,.85rem); line-height:1.6; color:var(--text); font-weight:300; }
-.am-sections .am-section:last-child:nth-child(odd) { grid-column:1/-1; }
-
-.am-routine { display:flex; flex-direction:column; gap:.3rem; margin-top:.3rem; }
-.am-day { display:flex; align-items:center; gap:.6rem; }
-.am-day-label { font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); min-width:52px; font-weight:600; }
-.am-day-val { font-size:.78rem; color:var(--text); }
-
-@media(max-width:640px){
-  .aboutme-slide{padding:1rem 1rem 3.5rem;justify-content:flex-start;overflow-y:auto;height:auto;}
-  .am-sections{grid-template-columns:1fr;}
-  .am-sections .am-section:last-child:nth-child(odd){grid-column:auto;}
+:root{
+  --bg:#0b0012;
+  --surface:#0e1014;
+  --surface2:#13161b;
+  --border:rgba(255,255,255,.06);
+  --accent:#c9963a;
+  --accent2:#e8b870;
+  --text:#b8b3ac;
+  --text-dim:#52504d;
+  --white:#f0ece6;
+  --bar-h:48px;
 }
 
-.arrow { position:fixed; top:0; width:70px; height:100vh; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:100; opacity:0; transition:opacity .2s; background:transparent; border:none; outline:none; }
-#arrow-left  { left:0; }
-#arrow-right { right:0; }
-.arrow svg { width:36px; height:36px; fill:none; stroke:var(--accent); stroke-width:2.2; filter:drop-shadow(0 0 8px rgba(232,160,69,.6)); pointer-events:none; }
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);}
 
-/* DOTS */
-#indicator { position:fixed; bottom:1.6rem; left:50%; transform:translateX(-50%); display:flex; gap:.45rem; z-index:100; }
-.dot { width:5px; height:5px; border-radius:50%; background:#2a2d32; transition:background .3s,transform .3s; cursor:pointer; }
-.dot.active { background:var(--accent); transform:scale(1.5); }
+/* ── TOPBAR ── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--bar-h);
+  background:rgb(27 0 44);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.6rem;z-index:300;
+}
+.tb-brand{display:flex;align-items:baseline;gap:.55rem;}
+.tb-title{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--white);letter-spacing:.02em;}
+.tb-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-bottom:.1rem;}
+.tb-sub{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#acacac;}
+.tb-right{display:flex;align-items:center;gap:.5rem;}
 
-@keyframes up { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+#play-btn{
+  display:flex;align-items:center;gap:.4rem;
+  background:#e8e8e8;border:1px solid rgb(255 164 0);
+  color:#ff9900;border-radius:40px;
+  padding:.3rem .9rem;font-size:1rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .25s;
+}
+#play-btn:hover{background:rgba(201,150,58,.1);border-color:rgba(201,150,58,.6);}
+#play-btn svg{flex-shrink:0;}
 
+/* ── SLIDER ── */
+#slider{
+  display:flex;
+  width:100%;height:calc(100vh - var(--bar-h));
+  margin-top:var(--bar-h);
+  transition:transform .7s cubic-bezier(.86,0,.07,1);
+  will-change:transform;
+}
+.slide{
+  min-width:100vw;height:calc(100vh - var(--bar-h));
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+
+/* ── COVER ── */
+#slide-0{
+  background:#0b0012;
+  flex-direction:column;
+  gap:0;
+}
+.cover-noise{
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  opacity:.4;pointer-events:none;
+}
+.cover-glow{
+  position:absolute;
+  width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(201,150,58,.07) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+  animation:glowpulse 5s ease-in-out infinite;
+}
+@keyframes glowpulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}}
+.cover-inner{position:relative;z-index:1;text-align:center;}
+.cover-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.4rem;
+  opacity:0;animation:fadeup .6s .4s forwards;
+}
+.cover-tag::before,.cover-tag::after{content:'';flex:1;width:20px;height:1px;background:var(--accent);opacity:.4;}
+.cover-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(3.5rem,10vw,9.5rem);
+  line-height:.92;color:var(--white);
+  opacity:0;animation:fadeup .9s .6s forwards;
+  text-shadow: 0 0px 20px rgb(157 0 255);
+}
+.cover-title em{color:#ffa400;font-style:italic;}
+.cover-rule{width:1px;height:40px;background:linear-gradient(to bottom,#ffa400,transparent);margin:1.6rem auto;opacity:0;animation:fadeup .5s .9s forwards;}
+.cover-meta{
+  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);opacity:0;animation:fadeup .5s 1s forwards;
+}
+
+/* ── PERSON SLIDES ── */
+.person-slide{display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%;}
+
+.photo-half{position:relative;overflow:hidden;background:var(--surface);}
+.photo-half::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg, #f9e0ff21 0%, #12001c 100%);
+  pointer-events:none;z-index:1;
+  box-shadow: inset -8px 0 12px -5px rgba(0,0,0,0.5);
+}
+
+.photo-upload-area{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.5rem;cursor:pointer;transition:background .2s;position:relative;
+}
+.photo-upload-area:hover{background:var(--surface2);}
+.upload-ico{opacity:.15;transition:opacity .2s;}
+.photo-upload-area:hover .upload-ico{opacity:.3;}
+.upload-hint{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);}
+.photo-upload-area img.preview{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:top center;
+  display:block;
+}
+input[type=file]{display:none;}
+
+.info-half{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:3.5rem 3rem 3.5rem 2.2rem;z-index:1;
+  position:relative;
+}
+.slide-eyebrow{
+  font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;
+  color:#ffa400;margin-bottom:1rem;
+  display:flex;align-items:center;gap:.6rem;
+  font-weight: 900;
+  text-shadow: 0 0px 20px rgb(255 0 0);
+}
+.slide-eyebrow::after{content:'';flex:1;max-width:28px;height:1px;background:var(--accent);opacity:.5;}
+.p-name{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(2.8rem,6vw,5rem);
+  line-height:.9;color:#ff9900;
+  margin-bottom:.3rem;
+  text-shadow: 0 0px 20px rgb(255 157 0);
+}
+.p-role{font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:#989898;margin-bottom:1.6rem;margin-top: 0.6rem;font-weight: 510;}
+.p-bio{
+  font-size:clamp(.82rem,1.2vw,.92rem);line-height:1.9;
+  color:#ffe1ab;font-weight:300;max-width:360px;
+  padding-left:.9rem;border-left:1px solid rgb(255 132 132);text-shadow: 0 0px 10px rgb(255 0 0);
+}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:1.5rem;}
+.chip{
+  background:#ffffff2e;
+  border:1px solid rgb(87 0 114);
+  color:#e8a6ff;border-radius:3px;
+  padding:.2rem .6rem;font-size:0.9rem;letter-spacing:.04em;
+  transition:border-color .2s,color .2s;
+}
+.chip:hover{border-color:rgba(201,150,58,.5);color:var(--accent2);}
+
+/* ── ABOUT ME ── */
+.aboutme-slide{
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:2vh 5vw;width:100%;height:100%;
+}
+.am-header{margin-bottom:1.2rem;width:100%;max-width:860px;}
+.am-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;width:100%;max-width:860px;}
+.am-card{
+  background:#3e3e3e33;
+  border:1px solid var(--border);
+  border-radius:8px;padding:.7rem 1rem;
+  transition:border-color .25s;
+}
+.am-card:hover{border-color:rgba(201,150,58,.2);}
+.am-label{
+  font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;
+  color:#ffa400;margin-bottom:.4rem;font-weight:bold;
+  text-shadow: 0 0px 15px rgb(255 91 0);
+}
+.am-text{font-size:.8rem;line-height:1.7;color:#989898;font-weight:bold;}
+.am-grid .am-card:last-child:nth-child(odd){grid-column:1/-1;}
+.am-routine{display:flex;flex-direction:column;gap:.3rem;margin-top:.2rem;}
+.am-day{display:flex;align-items:center;gap:.7rem;}
+.am-day-label{
+  font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;
+  color:#dab7ff;min-width:54px;font-weight:500;
+}
+.am-day-val{font-size:.84rem;color:#ac5dff;}
+
+/* ── VIDEO PLAYER ── */
+#vid-player{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  width:320px;
+  background:var(--surface);
+  /*border:2px solid rgb(255 131 0);*/
+  border-radius:12px;
+  box-shadow:0 0px 20px rgb(60 0 130), 0 0 0 1px rgb(255 255 255 / 0%);
+  z-index:400;overflow:hidden;
+  display:none;
+  transform:translateY(12px);opacity:0;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s;
+}
+#vid-player.open{display:block;}
+#vid-player.visible{transform:translateY(0);opacity:1;}
+#vid-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.55rem .85rem;
+  border-bottom:1px solid var(--border);
+  cursor:grab;user-select:none;
+  background:var(--surface2);
+}
+#vid-header:active{cursor:grabbing;}
+#vid-title{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);}
+.vid-btns{display:flex;gap:.25rem;}
+.vid-ctrl{
+  background:none;border:none;color:var(--text-dim);cursor:pointer;
+  font-size:.78rem;padding:.2rem .4rem;border-radius:4px;
+  transition:color .15s,background .15s;line-height:1;
+  font-family:inherit;
+}
+.vid-ctrl:hover{color:var(--white);background:rgba(255,255,255,.06);}
+#vid-el{width:100%;display:block;background:#000;max-height:200px;}
+
+/* ── ARROWS ── */
+.arrow{
+  position:fixed;top:var(--bar-h);
+  height:calc(100vh - var(--bar-h));
+  width:60px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:200;
+  opacity:0;transition:opacity .2s;
+  background:none;border:none;outline:none;
+}
+#arrow-left{left:0;}
+#arrow-right{right:0;}
+.arrow svg{
+  width:28px;height:28px;fill:none;
+  stroke:#ffa400;stroke-width:1.8;
+  filter:drop-shadow(0 0 10px rgba(201,150,58,.5));
+  pointer-events:none;
+  transition:transform .2s;
+}
+.arrow:hover svg{transform:scale(1.15);}
+
+/* ── DOTS ── */
+#indicator{
+  position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.4rem;z-index:200;
+}
+.dot{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(255,255,255,.15);
+  transition:background .3s,transform .3s,width .3s;
+  cursor:pointer;
+}
+.dot.active{background:#ffa400;transform:scale(1.4);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeup{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.slide.entered .anim{animation:fadeup .6s both;}
+.slide.entered .anim-1{animation-delay:.1s;}
+.slide.entered .anim-2{animation-delay:.2s;}
+.slide.entered .anim-3{animation-delay:.32s;}
+.slide.entered .anim-4{animation-delay:.44s;}
+.slide.entered .anim-5{animation-delay:.54s;}
+
+/* ── MOBILE ── */
 @media(max-width:640px){
-  .person-slide{grid-template-columns:1fr;grid-template-rows:38vh 1fr;}
-  .photo-half::after{background:linear-gradient(to bottom,transparent 55%,var(--bg) 100%);}
+  .person-slide{grid-template-columns:1fr;grid-template-rows:40vh 1fr;}
+  .photo-half::after{background:linear-gradient(to bottom,transparent 40%,var(--bg) 90%);}
   .info-half{padding:1.2rem 1.4rem 3.5rem;overflow-y:auto;}
-  .arrow{width:44px;}
+  .arrow{width:40px;}
+  .am-grid{grid-template-columns:1fr;}
+  .am-grid .am-card:last-child:nth-child(odd){grid-column:auto;}
+  .aboutme-slide{padding:1rem;justify-content:flex-start;overflow-y:auto;height:auto;}
 }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-brand">
+    <span class="tb-title">Digital Album</span>
+    <span class="tb-dot"></span>
+    <span class="tb-sub">Peter · Lima, Perú · 2025</span>
+  </div>
+  <div class="tb-right">
+    <button id="play-btn" onclick="togglePlayer()">
+      <svg id="play-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span id="play-label">Play Video</span>
+    </button>
+  </div>
+</div>
+
+<!-- SLIDER -->
 <div id="slider">
 
   <!-- COVER -->
   <div class="slide" id="slide-0">
-    <div style="text-align:center;position:relative;z-index:1">
-      <p class="cover-eyebrow">Peter · Lima, Perú · 2025</p>
-      <h1 class="cover-title">MY<br><span>DIGITAL</span><br>ALBUM</h1>
-      <p class="cover-sub">Lima, Perú · 2025</p>
+    <div class="cover-noise"></div>
+    <div class="cover-glow"></div>
+    <div class="cover-inner">
+      <p class="cover-tag">Peter · Lima, Perú · 2025</p>
+      <h1 class="cover-title">My<br><em>Digital</em><br>Album</h1>
+      <div class="cover-rule"></div>
     </div>
   </div>
 
@@ -132,68 +328,62 @@ input[type=file] { display:none; }
         </label>
       </div>
       <div class="info-half">
-        <p class="slide-num">01 / 06</p>
-        <h2 class="p-name">Peter</h2>
-        <p class="p-role">Software Engineering Student</p>
-        <div class="p-line"></div>
-        <p class="p-bio">I am thin and I have straight black hair. I wear glasses. I go to classes from Monday to Thursday and take an English course on Saturdays.</p>
-        <div class="chips">
-          <span class="chip">💻 Dev</span>
-          <span class="chip">🇬🇧 English Sat</span>
+        <p class="slide-eyebrow anim anim-1">01 / 06</p>
+        <h2 class="p-name anim anim-2">Peter</h2>
+        <p class="p-role anim anim-2">Software Engineering Student</p>
+        <p class="p-bio anim anim-3">Thin build, straight black hair, glasses. Classes Monday through Thursday, English course on Saturdays, and gaming on Sundays.</p>
+        <div class="chips anim anim-4">
+          <span class="chip">👨‍💻 Dev</span>
+          <span class="chip">🗣️ English Sat</span>
           <span class="chip">🎮 Gamer Sun</span>
-          <span class="chip">📚 UAP</span>
+          <span class="chip">🏫 UAP</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PETER ABOUT ME -->
+  <!-- PETER — ABOUT ME -->
   <div class="slide" id="slide-about">
     <div class="aboutme-slide">
       <div class="am-header">
-        <p class="slide-num" style="color:var(--accent);font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;margin-bottom:.5rem;">ABOUT ME</p>
-        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,6vw,5rem);color:#fff;line-height:.95;">Peter<span style="color:var(--accent);">.</span></h2>
-        <div style="width:32px;height:2px;background:var(--accent);margin:.8rem 0;"></div>
+        <p class="slide-eyebrow anim anim-1" style="margin-bottom:.6rem;">About Me</p>
+        <h2 class="anim anim-2" style="font-family:'DM Serif Display',serif;font-size:clamp(2.4rem,5vw,4rem);color:var(--white);line-height:.95;">Peter<span style="color:var(--accent);">.</span></h2>
       </div>
-      <div class="am-sections">
-        <div class="am-section">
+      <div class="am-grid">
+        <div class="am-card anim anim-1">
           <p class="am-label">👋 Presentation</p>
           <p class="am-text">Hi! My name is Peter. I am 21 years old. I live in Villa El Salvador, Lima, Peru. Welcome to my digital album.</p>
         </div>
-        <div class="am-section">
-          <p class="am-label">🎓 Personal Information</p>
-          <div class="chips" style="margin-top:.2rem;">
-            <span class="chip">💻 Software Engineering</span>
+        <div class="am-card anim anim-2">
+          <p class="am-label">🎓 Studies</p>
+          <div class="chips" style="margin-top:.3rem;">
+            <span class="chip">👨‍💻 Software Engineering</span>
             <span class="chip">🏫 UAP</span>
             <span class="chip">🔄 5th Cycle</span>
-            <span class="chip">⭐ Creative</span>
-            <span class="chip">🔍 Curious</span>
-            <span class="chip">💪 Hardworking</span>
           </div>
         </div>
-        <div class="am-section">
-          <p class="am-label">🧍 Physical Appearance</p>
-          <div class="chips" style="margin-top:.2rem;">
+        <div class="am-card anim anim-2">
+          <p class="am-label">🧍 Appearance</p>
+          <div class="chips" style="margin-top:.3rem;">
             <span class="chip">🧍 Thin</span>
             <span class="chip">🖤 Straight black hair</span>
             <span class="chip">👓 Glasses</span>
           </div>
         </div>
-        <div class="am-section">
-          <p class="am-label">📅 Daily Routine</p>
+        <div class="am-card anim anim-3">
+          <p class="am-label">📅 Routine</p>
           <div class="am-routine">
-            <div class="am-day"><span class="am-day-label">Mon–Thu</span><span class="am-day-val">📚 In-person classes</span></div>
-            <div class="am-day"><span class="am-day-label">Fri</span><span class="am-day-val">🔬 New technologies</span></div>
-            <div class="am-day"><span class="am-day-label">Sat</span><span class="am-day-val">🇬🇧 English course</span></div>
+            <div class="am-day"><span class="am-day-label">Mon–Thu</span><span class="am-day-val">🏫 Classes</span></div>
+            <div class="am-day"><span class="am-day-label">Fri</span><span class="am-day-val">🔬 Tech research</span></div>
+            <div class="am-day"><span class="am-day-label">Sat</span><span class="am-day-val">🗣️ English course</span></div>
             <div class="am-day"><span class="am-day-label">Sun</span><span class="am-day-val">🎮 Games & series</span></div>
           </div>
         </div>
-        <div class="am-section" style="grid-column:1/-1;">
+        <div class="am-card anim anim-4" style="grid-column:1/-1;">
           <p class="am-label">🎮 Hobbies</p>
-          <div class="chips" style="margin-top:.2rem;">
-            <span class="chip">🎮 Video games</span>
-            <span class="chip">📺 Series</span>
-            <span class="chip">💻 Tech research</span>
+          <div class="chips" style="margin-top:.3rem;">
+            <span class="chip">🎮 Video games</span><span class="chip">📺 Series</span><span class="chip">💻 Tech research</span>
+            <span class="chip">⭐ Creative</span><span class="chip">🔍 Curious</span><span class="chip">💪 Hardworking</span>
           </div>
         </div>
       </div>
@@ -210,12 +400,11 @@ input[type=file] { display:none; }
         </label>
       </div>
       <div class="info-half">
-        <p class="slide-num">02 / 06</p>
-        <h2 class="p-name">Ana</h2>
-        <p class="p-role">Mother · Nurse</p>
-        <div class="p-line"></div>
-        <p class="p-bio">She has long straight black hair and brown eyes. She works at Hospital San José from Monday to Friday. On Saturdays she cooks for the family.</p>
-        <div class="chips">
+        <p class="slide-eyebrow anim anim-1">02 / 06</p>
+        <h2 class="p-name anim anim-2">Ana</h2>
+        <p class="p-role anim anim-2">Mother · Nurse</p>
+        <p class="p-bio anim anim-3">Long straight black hair, brown eyes. Works at Hospital San José from Monday to Friday. Saturdays she cooks for the whole family.</p>
+        <div class="chips anim anim-4">
           <span class="chip">🏥 San José</span>
           <span class="chip">🍚 Cooks Sat</span>
           <span class="chip">📺 Soap Operas Sun</span>
@@ -234,12 +423,11 @@ input[type=file] { display:none; }
         </label>
       </div>
       <div class="info-half">
-        <p class="slide-num">03 / 06</p>
-        <h2 class="p-name">Luis</h2>
-        <p class="p-role">Father · Security Guard</p>
-        <div class="p-line"></div>
-        <p class="p-bio">He is tall and strong with short black hair and a mustache. He works at a bank from Monday to Saturday. On Sundays he watches soccer and plays with friends.</p>
-        <div class="chips">
+        <p class="slide-eyebrow anim anim-1">03 / 06</p>
+        <h2 class="p-name anim anim-2">Luis</h2>
+        <p class="p-role anim anim-2">Father · Security Guard</p>
+        <p class="p-bio anim anim-3">Tall and strong, short black hair with a mustache. Works at a bank Monday through Saturday. Sundays he watches soccer and plays with friends.</p>
+        <div class="chips anim anim-4">
           <span class="chip">🏦 Bank Guard</span>
           <span class="chip">⚽ Soccer Sun</span>
           <span class="chip">💪 Strong</span>
@@ -258,12 +446,11 @@ input[type=file] { display:none; }
         </label>
       </div>
       <div class="info-half">
-        <p class="slide-num">04 / 06</p>
-        <h2 class="p-name">Valentina</h2>
-        <p class="p-role">Sister · 15 years old</p>
-        <div class="p-line"></div>
-        <p class="p-bio">She has long straight brown hair and big brown eyes. She goes to school from Monday to Friday. On weekends she goes out with her friends.</p>
-        <div class="chips">
+        <p class="slide-eyebrow anim anim-1">04 / 06</p>
+        <h2 class="p-name anim anim-2">Valentina</h2>
+        <p class="p-role anim anim-2">Sister · 15 years old</p>
+        <p class="p-bio anim anim-3">Long straight brown hair, big brown eyes. School Monday to Friday. On weekends she goes out with her friends.</p>
+        <div class="chips anim anim-4">
           <span class="chip">🏫 4th Grade</span>
           <span class="chip">👭 Friends on weekends</span>
           <span class="chip">🌟 15 yrs</span>
@@ -282,12 +469,11 @@ input[type=file] { display:none; }
         </label>
       </div>
       <div class="info-half">
-        <p class="slide-num">05 / 06</p>
-        <h2 class="p-name">Carlos</h2>
-        <p class="p-role">Older Brother · 30 years old</p>
-        <div class="p-line"></div>
-        <p class="p-bio">He is tall with short black hair. He studies psychology and has his own barbershop. On Sundays he plays soccer with my father.</p>
-        <div class="chips">
+        <p class="slide-eyebrow anim anim-1">05 / 06</p>
+        <h2 class="p-name anim anim-2">Carlos</h2>
+        <p class="p-role anim anim-2">Older Brother · 30 years old</p>
+        <p class="p-bio anim anim-3">Tall, short black hair. Studies psychology and runs his own barbershop. Sundays he plays soccer with Dad.</p>
+        <div class="chips anim anim-4">
           <span class="chip">🧠 Psychology</span>
           <span class="chip">✂️ Barbershop</span>
           <span class="chip">⚽ Soccer Sun</span>
@@ -306,12 +492,11 @@ input[type=file] { display:none; }
         </label>
       </div>
       <div class="info-half">
-        <p class="slide-num">06 / 06</p>
-        <h2 class="p-name">Javier</h2>
-        <p class="p-role">Friend · Civil Engineering</p>
-        <div class="p-line"></div>
-        <p class="p-bio">He is Venezuelan, dark-skinned, thin, with short black hair. He studies at my university. On Sundays he calls his family in Venezuela by video call.</p>
-        <div class="chips">
+        <p class="slide-eyebrow anim anim-1">06 / 06</p>
+        <h2 class="p-name anim anim-2">Javier</h2>
+        <p class="p-role anim anim-2">Friend · Civil Engineering</p>
+        <p class="p-bio anim anim-3">Venezuelan, dark-skinned, thin, short black hair. Studies at the same university. Sundays he video-calls his family back home in Venezuela.</p>
+        <div class="chips anim anim-4">
           <span class="chip">🇻🇪 Caracas</span>
           <span class="chip">🏗️ Civil Eng</span>
           <span class="chip">📹 Calls Sun</span>
@@ -320,36 +505,7 @@ input[type=file] { display:none; }
     </div>
   </div>
 
-</div>
-
-<!-- TOP BAR -->
-<div id="topbar">
-  <div id="topbar-left">
-    <span id="topbar-title">MY DIGITAL ALBUM</span>
-    <span id="topbar-sub">Peter · Lima, Perú · 2025</span>
-  </div>
-  <div id="topbar-right">
-    <button id="play-btn" onclick="togglePlayer()" title="Open video player">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      <span id="play-btn-label">Play Video</span>
-      <span id="play-pulse"></span>
-    </button>
-  </div>
-</div>
-
-<!-- FLOATING VIDEO PLAYER -->
-<div id="vid-player" style="display:none;">
-  <div id="vid-header">
-    <span id="vid-title">📹 My Video</span>
-    <div style="display:flex;gap:.4rem;align-items:center;">
-      <button class="vid-ctrl" onclick="minimizePlayer()" title="Minimize">─</button>
-      <button class="vid-ctrl" onclick="closePlayer()" title="Close">✕</button>
-    </div>
-  </div>
-  <div id="vid-body">
-    <video id="vid-el" controls playsinline src="video.mp4" style="width:100%;border-radius:0 0 10px 10px;display:block;background:#000;"></video>
-  </div>
-</div>
+</div><!-- /slider -->
 
 <!-- ARROWS -->
 <button class="arrow" id="arrow-left"  onclick="go(-1)" aria-label="Previous">
@@ -359,9 +515,16 @@ input[type=file] { display:none; }
   <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
 </button>
 
+<!-- DOTS -->
 <div id="indicator"></div>
 
+<!-- FLOATING VIDEO PLAYER -->
+<div id="vid-player">
+  <video id="vid-el" controls playsinline style="width:100%;display:block;background:#000;border-radius:0 0 11px 11px;"></video>
+</div>
+
 <script>
+/* ── SLIDER ── */
 const TOTAL = 8;
 let current = 0;
 const slider = document.getElementById('slider');
@@ -369,100 +532,124 @@ const arrowL = document.getElementById('arrow-left');
 const arrowR = document.getElementById('arrow-right');
 const ind    = document.getElementById('indicator');
 
-for (let i = 0; i < TOTAL; i++) {
-  const d = document.createElement('div');
-  d.className = 'dot' + (i===0?' active':'');
-  d.onclick = () => goTo(i);
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>goTo(i);
   ind.appendChild(d);
 }
 
-function goTo(i) {
-  if (i < 0 || i >= TOTAL) return;
-  current = i;
-  slider.style.transform = `translateX(-${current*100}vw)`;
-  document.querySelectorAll('.dot').forEach((d,j) => d.classList.toggle('active', j===current));
-  updateArrows();
-}
-function go(d) { goTo(current+d); }
+function getSlide(i){ return slider.children[i]; }
 
-function updateArrows(x) {
-  arrowL.style.opacity = current > 0         ? '1' : '0';
-  arrowR.style.opacity = current < TOTAL - 1 ? '1' : '0';
+function triggerEnter(i){
+  const sl=getSlide(i);
+  if(!sl)return;
+  sl.classList.remove('entered');
+  void sl.offsetWidth;
+  sl.classList.add('entered');
 }
 
-arrowL.style.opacity = '0';
-arrowR.style.opacity = '1';
+function goTo(i){
+  if(i<0||i>=TOTAL)return;
+  current=i;
+  slider.style.transform=`translateX(-${current*100}vw)`;
+  document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===current));
+  arrowL.style.opacity=current>0?'1':'0';
+  arrowR.style.opacity=current<TOTAL-1?'1':'0';
+  triggerEnter(current);
+}
+function go(d){goTo(current+d);}
 
-document.addEventListener('keydown', e => {
-  if (e.key==='ArrowRight') go(1);
-  if (e.key==='ArrowLeft')  go(-1);
+arrowL.style.opacity='0';
+arrowR.style.opacity='1';
+triggerEnter(0);
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')go(1);
+  if(e.key==='ArrowLeft')go(-1);
 });
 
-let tx = null;
-document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
-document.addEventListener('touchend',   e => {
-  if (tx===null) return;
-  const dx = e.changedTouches[0].clientX - tx;
-  if (Math.abs(dx) > 50) go(dx<0?1:-1);
-  tx = null;
+let tx=null;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(tx===null)return;
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>50)go(dx<0?1:-1);
+  tx=null;
 });
 
-// VIDEO PLAYER
+/* ── VIDEO PLAYER ── */
 const vidPlayer = document.getElementById('vid-player');
-const vidEl = document.getElementById('vid-el');
-const playBtnLabel = document.getElementById('play-btn-label');
-let playerOpen = false;
+const vidEl     = document.getElementById('vid-el');
+const playLabel = document.getElementById('play-label');
+const playIco   = document.getElementById('play-ico');
+let playerOpen  = false;
+const VIDEO_SRC = 'video.mp4';
 
-function togglePlayer() {
-  playerOpen = !playerOpen;
-  vidPlayer.style.display = playerOpen ? 'block' : 'none';
-  playBtnLabel.textContent = playerOpen ? 'Hide Video' : 'Play Video';
-  if (playerOpen) vidEl.play();
+function togglePlayer(){
+  if(playerOpen){ closePlayer(); } else { openPlayer(); }
 }
-function minimizePlayer() {
-  playerOpen = false;
-  vidPlayer.style.display = 'none';
-  playBtnLabel.textContent = 'Play Video';
+
+function openPlayer(){
+  playerOpen=true;
+  vidEl.src=VIDEO_SRC;
+  vidEl.load();
+  vidPlayer.classList.add('open');
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{ vidPlayer.classList.add('visible'); });
+  });
+  playLabel.textContent='Hide Video';
+  playIco.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  vidEl.play().catch(()=>{});
+}
+
+function closePlayer(){
+  playerOpen=false;
   vidEl.pause();
+  vidEl.src='';
+  vidEl.load();
+  vidPlayer.classList.remove('visible');
+  setTimeout(()=>{ vidPlayer.classList.remove('open'); },300);
+  playLabel.textContent='Play Video';
+  playIco.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
 }
-function closePlayer() { minimizePlayer(); }
 
-// DRAG
-let dragging = false, dragOffX = 0, dragOffY = 0;
-document.getElementById('vid-header').addEventListener('mousedown', e => {
-  dragging = true;
-  const r = vidPlayer.getBoundingClientRect();
-  dragOffX = e.clientX - r.left;
-  dragOffY = e.clientY - r.top;
-  vidPlayer.style.right = 'auto';
-  vidPlayer.style.bottom = 'auto';
+/* ── DRAG PLAYER ── */
+let dragging=false,dragOffX=0,dragOffY=0;
+document.getElementById('vid-header').addEventListener('mousedown',e=>{
+  dragging=true;
+  const r=vidPlayer.getBoundingClientRect();
+  dragOffX=e.clientX-r.left;
+  dragOffY=e.clientY-r.top;
+  vidPlayer.style.right='auto';vidPlayer.style.bottom='auto';
 });
-document.addEventListener('mousemove', e => {
-  if (!dragging) return;
-  vidPlayer.style.left = (e.clientX - dragOffX) + 'px';
-  vidPlayer.style.top  = (e.clientY - dragOffY) + 'px';
+document.addEventListener('mousemove',e=>{
+  if(!dragging)return;
+  vidPlayer.style.left=(e.clientX-dragOffX)+'px';
+  vidPlayer.style.top=(e.clientY-dragOffY)+'px';
 });
-document.addEventListener('mouseup', () => { dragging = false; });
-document.getElementById('vid-header').addEventListener('touchstart', e => {
-  dragging = true;
-  const r = vidPlayer.getBoundingClientRect();
-  dragOffX = e.touches[0].clientX - r.left;
-  dragOffY = e.touches[0].clientY - r.top;
-  vidPlayer.style.right = 'auto'; vidPlayer.style.bottom = 'auto';
-}, {passive:true});
-document.addEventListener('touchmove', e => {
-  if (!dragging) return;
-  vidPlayer.style.left = (e.touches[0].clientX - dragOffX) + 'px';
-  vidPlayer.style.top  = (e.touches[0].clientY - dragOffY) + 'px';
-}, {passive:true});
-document.addEventListener('touchend', () => { dragging = false; });
+document.addEventListener('mouseup',()=>{dragging=false;});
+document.getElementById('vid-header').addEventListener('touchstart',e=>{
+  dragging=true;
+  const r=vidPlayer.getBoundingClientRect();
+  dragOffX=e.touches[0].clientX-r.left;
+  dragOffY=e.touches[0].clientY-r.top;
+  vidPlayer.style.right='auto';vidPlayer.style.bottom='auto';
+},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(!dragging)return;
+  vidPlayer.style.left=(e.touches[0].clientX-dragOffX)+'px';
+  vidPlayer.style.top=(e.touches[0].clientY-dragOffY)+'px';
+},{passive:true});
+document.addEventListener('touchend',()=>{dragging=false;});
 
-function setPhoto(input, pid) {
-  const r = new FileReader();
-  r.onload = ev => {
-    const img = document.getElementById(pid);
-    img.src = ev.target.result;
-    img.style.display = 'block';
+/* ── PHOTOS ── */
+function setPhoto(input,pid){
+  const r=new FileReader();
+  r.onload=ev=>{
+    const img=document.getElementById(pid);
+    img.src=ev.target.result;
+    img.style.display='block';
   };
   r.readAsDataURL(input.files[0]);
 }
