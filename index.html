@@ -1,574 +1,518 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Digital Album — Peter</title>
+<title>Barranco — Lima, Peru</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-
 :root{
-  --bg:#0b0012;
-  --surface:#0e1014;
-  --surface2:#13161b;
-  --border:rgba(255,255,255,.06);
-  --accent:#c9963a;
-  --accent2:#e8b870;
-  --text:#b8b3ac;
-  --text-dim:#52504d;
-  --white:#f0ece6;
-  --bar-h:48px;
+  --bg:#0d0018;
+  --purple-dark:#1a0035;
+  --purple-mid:#3b0075;
+  --purple-glow:#7c3aed;
+  --purple-light:#c4b5fd;
+  --yellow:#fbbf24;
+  --yellow-glow:#f59e0b;
+  --white:#f5f0ff;
+  --white-dim:rgba(245,240,255,.65);
+  --bar:48px;
 }
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;}
 
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);}
-
-/* ── TOPBAR ── */
-#topbar{
-  position:fixed;top:0;left:0;right:0;height:var(--bar-h);
-  background:rgb(27 0 44);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
+/* TOPBAR */
+#bar{
+  position:fixed;top:0;left:0;right:0;height:var(--bar);
+  background:rgba(13,0,24,.85);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(124,58,237,.2);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 1.6rem;z-index:300;
+  padding:0 1.5rem;z-index:300;
 }
-.tb-brand{display:flex;align-items:baseline;gap:.55rem;}
-.tb-title{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--white);letter-spacing:.02em;}
-.tb-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-bottom:.1rem;}
-.tb-sub{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#acacac;}
-.tb-right{display:flex;align-items:center;gap:.5rem;}
+.bar-brand{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--white);letter-spacing:.03em;}
+.bar-brand em{color:var(--yellow);font-style:italic;}
+.bar-tag{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--purple-light);opacity:.7;}
 
-#play-btn{
+#vid-btn{
   display:flex;align-items:center;gap:.4rem;
-  background:#e8e8e8;border:1px solid rgb(255 164 0);
-  color:#ff9900;border-radius:40px;
-  padding:.3rem .9rem;font-size:1rem;font-weight:500;
-  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
-  font-family:'DM Sans',sans-serif;
-  transition:all .25s;
+  background:transparent;border:1px solid var(--yellow);
+  color:var(--yellow);border-radius:40px;
+  padding:.28rem .85rem;font-size:.7rem;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
 }
-#play-btn:hover{background:rgba(201,150,58,.1);border-color:rgba(201,150,58,.6);}
-#play-btn svg{flex-shrink:0;}
+#vid-btn:hover{background:rgba(251,191,36,.1);}
 
-/* ── SLIDER ── */
+/* SLIDER */
 #slider{
-  display:flex;
-  width:100%;height:calc(100vh - var(--bar-h));
-  margin-top:var(--bar-h);
-  transition:transform .7s cubic-bezier(.86,0,.07,1);
+  display:flex;width:100%;height:calc(100vh - var(--bar));
+  margin-top:var(--bar);
+  transition:transform .75s cubic-bezier(.86,0,.07,1);
   will-change:transform;
 }
 .slide{
-  min-width:100vw;height:calc(100vh - var(--bar-h));
-  display:flex;align-items:center;justify-content:center;
+  min-width:100vw;height:calc(100vh - var(--bar));
+  display:flex;align-items:stretch;
   position:relative;overflow:hidden;
 }
 
-/* ── COVER ── */
-#slide-0{
-  background:#0b0012;
-  flex-direction:column;
-  gap:0;
+/* ---------- COVER ---------- */
+#s0{
+  background:var(--bg);
+  align-items:center;justify-content:center;flex-direction:column;
 }
-.cover-noise{
-  position:absolute;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-  opacity:.4;pointer-events:none;
-}
-.cover-glow{
-  position:absolute;
-  width:600px;height:600px;
-  background:radial-gradient(ellipse,rgba(201,150,58,.07) 0%,transparent 70%);
+.cv-orb{
+  position:absolute;width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(124,58,237,.18) 0%,transparent 65%);
   top:50%;left:50%;transform:translate(-50%,-50%);
-  pointer-events:none;
-  animation:glowpulse 5s ease-in-out infinite;
+  animation:pulse 6s ease-in-out infinite;pointer-events:none;
 }
-@keyframes glowpulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}}
-.cover-inner{position:relative;z-index:1;text-align:center;}
-.cover-tag{
-  display:inline-flex;align-items:center;gap:.4rem;
-  font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:1.4rem;
-  opacity:0;animation:fadeup .6s .4s forwards;
+.cv-orb2{
+  position:absolute;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(251,191,36,.08) 0%,transparent 70%);
+  top:38%;left:54%;transform:translate(-50%,-50%);
+  animation:pulse 4s ease-in-out infinite reverse;pointer-events:none;
 }
-.cover-tag::before,.cover-tag::after{content:'';flex:1;width:20px;height:1px;background:var(--accent);opacity:.4;}
-.cover-title{
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7;}50%{transform:translate(-50%,-50%) scale(1.08);opacity:1;}}
+.cv-inner{position:relative;z-index:1;text-align:center;padding:0 2rem;}
+.cv-eyebrow{
+  font-size:.58rem;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--yellow);margin-bottom:1.2rem;
+  opacity:0;animation:up .6s .3s forwards;
+}
+.cv-title{
   font-family:'DM Serif Display',serif;
-  font-size:clamp(3.5rem,10vw,9.5rem);
-  line-height:.92;color:var(--white);
-  opacity:0;animation:fadeup .9s .6s forwards;
-  text-shadow: 0 0px 20px rgb(157 0 255);
+  font-size:clamp(4rem,11vw,10rem);
+  line-height:.88;color:var(--white);
+  opacity:0;animation:up .9s .5s forwards;
+  text-shadow:0 0 30px rgb(145 82 255);
 }
-.cover-title em{color:#ffa400;font-style:italic;}
-.cover-rule{width:1px;height:40px;background:linear-gradient(to bottom,#ffa400,transparent);margin:1.6rem auto;opacity:0;animation:fadeup .5s .9s forwards;}
-.cover-meta{
-  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--text-dim);opacity:0;animation:fadeup .5s 1s forwards;
+.cv-title em{color:var(--yellow);font-style:italic;}
+.cv-line{width:1px;height:36px;background:linear-gradient(to bottom,var(--yellow),transparent);margin:1.4rem auto;opacity:0;animation:up .5s .9s forwards;}
+.cv-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--purple-light);opacity:0;animation:up .5s 1s forwards;}
+
+/* ---------- NORMAL SLIDES ---------- */
+/* layout: photo left + info right */
+.sl-photo{
+  width:48%;position:relative;overflow:hidden;flex-shrink:0;
+  background:var(--purple-dark);
 }
-
-/* ── PERSON SLIDES ── */
-.person-slide{display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%;}
-
-.photo-half{position:relative;overflow:hidden;background:var(--surface);}
-.photo-half::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg, #f9e0ff21 0%, #12001c 100%);
+.sl-photo img{
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  display:block;filter:brightness(.85);
+}
+.sl-photo label{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.4rem;cursor:pointer;
+}
+.sl-photo label svg{opacity:.18;}
+.sl-photo label span{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--purple-light);opacity:.4;}
+.sl-photo input{display:none;}
+/* gradient overlay on right edge */
+.sl-photo::after{
+  content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(to right,transparent,var(--bg));
   pointer-events:none;z-index:1;
-  box-shadow: inset -8px 0 12px -5px rgba(0,0,0,0.5);
 }
 
-.photo-upload-area{
-  width:100%;height:100%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:.5rem;cursor:pointer;transition:background .2s;position:relative;
+.sl-info{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:3rem 3.5rem 3rem 2.5rem;position:relative;overflow-y:auto;
 }
-.photo-upload-area:hover{background:var(--surface2);}
-.upload-ico{opacity:.15;transition:opacity .2s;}
-.photo-upload-area:hover .upload-ico{opacity:.3;}
-.upload-hint{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);}
-.photo-upload-area img.preview{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:top center;
-  display:block;
-}
-input[type=file]{display:none;}
 
-.info-half{
-  display:flex;flex-direction:column;justify-content:center;
-  padding:3.5rem 3rem 3.5rem 2.2rem;z-index:1;
-  position:relative;
+.sl-num{
+  font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--yellow);margin-bottom:.9rem;font-weight:600;
 }
-.slide-eyebrow{
-  font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;
-  color:#ffa400;margin-bottom:1rem;
-  display:flex;align-items:center;gap:.6rem;
-  font-weight: 900;
-  text-shadow: 0 0px 20px rgb(255 0 0);
-}
-.slide-eyebrow::after{content:'';flex:1;max-width:28px;height:1px;background:var(--accent);opacity:.5;}
-.p-name{
+.sl-title{
   font-family:'DM Serif Display',serif;
-  font-size:clamp(2.8rem,6vw,5rem);
-  line-height:.9;color:#ff9900;
-  margin-bottom:.3rem;
-  text-shadow: 0 0px 20px rgb(255 157 0);
+  font-size:clamp(2.6rem,5vw,4.2rem);
+  line-height:.92;color:var(--white);margin-bottom:.5rem;
+  text-shadow:0 0 30px rgba(124,58,237,.4);
+  color: #9560ff;
 }
-.p-role{font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:#989898;margin-bottom:1.6rem;margin-top: 0.6rem;font-weight: 510;}
-.p-bio{
-  font-size:clamp(.82rem,1.2vw,.92rem);line-height:1.9;
-  color:#ffe1ab;font-weight:300;max-width:360px;
-  padding-left:.9rem;border-left:1px solid rgb(255 132 132);text-shadow: 0 0px 10px rgb(255 0 0);
+.sl-sub{
+  font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--purple-light);margin-bottom:1.5rem;font-weight:500;
 }
-.chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:1.5rem;}
-.chip{
-  background:#ffffff2e;
-  border:1px solid rgb(87 0 114);
-  color:#e8a6ff;border-radius:3px;
-  padding:.2rem .6rem;font-size:0.9rem;letter-spacing:.04em;
-  transition:border-color .2s,color .2s;
-}
-.chip:hover{border-color:rgba(201,150,58,.5);color:var(--accent2);}
+.sl-rule{width:32px;height:1px;background:var(--yellow);margin-bottom:1.5rem;opacity:.6;}
 
-/* ── ABOUT ME ── */
-.aboutme-slide{
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:2vh 5vw;width:100%;height:100%;
+/* TAGS */
+.tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:1.4rem;}
+.tag{
+  padding:.22rem .6rem;border-radius:3px;font-size:.75rem;
+  background:rgb(57 57 57 / 50%);border:1px solid rgba(124,58,237,.35);
+  color:var(--purple-light);letter-spacing:.04em;
+  transition:border-color .2s;
 }
-.am-header{margin-bottom:1.2rem;width:100%;max-width:860px;}
-.am-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;width:100%;max-width:860px;}
-.am-card{
-  background:#3e3e3e33;
-  border:1px solid var(--border);
-  border-radius:8px;padding:.7rem 1rem;
-  transition:border-color .25s;
-}
-.am-card:hover{border-color:rgba(201,150,58,.2);}
-.am-label{
-  font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;
-  color:#ffa400;margin-bottom:.4rem;font-weight:bold;
-  text-shadow: 0 0px 15px rgb(255 91 0);
-}
-.am-text{font-size:.8rem;line-height:1.7;color:#989898;font-weight:bold;}
-.am-grid .am-card:last-child:nth-child(odd){grid-column:1/-1;}
-.am-routine{display:flex;flex-direction:column;gap:.3rem;margin-top:.2rem;}
-.am-day{display:flex;align-items:center;gap:.7rem;}
-.am-day-label{
-  font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;
-  color:#dab7ff;min-width:54px;font-weight:500;
-}
-.am-day-val{font-size:.84rem;color:#ac5dff;}
+.tag:hover{border-color:var(--yellow);color:var(--yellow);}
 
-/* ── VIDEO PLAYER ── */
-#vid-player{
-  position:fixed;bottom:1.5rem;right:1.5rem;
-  width:320px;
-  background:var(--surface);
-  /*border:2px solid rgb(255 131 0);*/
-  border-radius:12px;
-  box-shadow:0 0px 20px rgb(60 0 130), 0 0 0 1px rgb(255 255 255 / 0%);
-  z-index:400;overflow:hidden;
-  display:none;
-  transform:translateY(12px);opacity:0;
+/* FACT ROWS — for hours/directions */
+.fact-row{
+  display:flex;align-items:baseline;gap:.6rem;
+  padding:.45rem 0;border-bottom:1px solid rgba(124,58,237,.12);
+}
+.fact-row:last-child{border-bottom:none;}
+.fact-label{
+  font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--yellow);min-width:70px;font-weight:600;flex-shrink:0;
+}
+.fact-val{font-size:.82rem;color:var(--white-dim);line-height:1.5;}
+
+/* QUOTE slide — full width centered */
+.sl-quote{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3rem 8vw;text-align:center;
+}
+.q-mark{font-family:'DM Serif Display',serif;font-size:7rem;line-height:.6;color:var(--purple-glow);opacity:.3;margin-bottom:1rem;}
+.q-text{
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:clamp(1.2rem,2.5vw,1.8rem);
+  color:#bf9ffe;line-height:1.6;max-width:720px;
+  text-shadow:0 0 30px rgba(124,58,237,.25);
+  margin-bottom:1.8rem;
+}
+.q-attr{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--yellow);}
+
+/* INVITATION slide */
+.sl-invite{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3rem 6vw;text-align:center;
+  background:radial-gradient(ellipse at center,rgba(59,0,117,.35) 0%,transparent 70%);
+}
+.inv-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(2.8rem,6vw,5.5rem);
+  color:var(--white);line-height:.9;margin-bottom:1rem;
+  text-shadow:0 0 50px rgba(124,58,237,.6);
+}
+.inv-title em{color:var(--yellow);font-style:italic;}
+.inv-body{
+  font-size:clamp(.85rem,1.3vw,.98rem);
+  color:var(--white-dim);line-height:1.85;max-width:560px;margin-bottom:1.8rem;
+}
+.inv-pill{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.5rem 1.4rem;border-radius:40px;
+  background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.4);
+  color:var(--yellow);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;
+}
+
+/* SHORT TEXT — no long paragraphs, just crisp lines */
+.sl-body{
+  font-size:.86rem;color:var(--white-dim);line-height:1.75;
+  border-left:2px solid rgba(124,58,237,.4);
+  padding-left:.9rem;max-width:340px;
+  color: rgb(165 242 255 / 65%);
+}
+
+/* ACTIVITY LIST */
+.act-list{display:flex;flex-direction:column;gap:.3rem;margin-top:1rem;}
+.act-item{
+  display:flex;align-items:center;gap:.7rem;
+  font-size:.82rem;color:var(--white-dim);
+  padding:.3rem 0;border-bottom:1px solid rgba(124,58,237,.1);
+}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:4px;height:4px;border-radius:50%;background:var(--yellow);flex-shrink:0;}
+
+/* ARROWS */
+.arrow{
+  position:fixed;top:var(--bar);height:calc(100vh - var(--bar));
+  width:56px;display:flex;align-items:center;justify-content:center;
+  background:none;border:none;outline:none;cursor:pointer;z-index:200;
+  opacity:0;transition:opacity .2s;
+}
+#al{left:0;}#ar{right:0;}
+.arrow svg{width:26px;height:26px;fill:none;stroke:var(--yellow);stroke-width:1.8;
+  filter:drop-shadow(0 0 8px rgba(251,191,36,.4));transition:transform .2s;}
+.arrow:hover svg{transform:scale(1.2);}
+
+/* DOTS */
+#dots{
+  position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.5rem;z-index:200;
+}
+.dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .3s;}
+.dot.on{background:var(--yellow);transform:scale(1.5);}
+
+/* ANIMS */
+@keyframes up{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.slide.in .a{animation:up .55s both;}
+.slide.in .a1{animation-delay:.08s;}
+.slide.in .a2{animation-delay:.18s;}
+.slide.in .a3{animation-delay:.28s;}
+.slide.in .a4{animation-delay:.38s;}
+.slide.in .a5{animation-delay:.48s;}
+.slide.in .a6{animation-delay:.56s;}
+
+/* FLOATING VIDEO */
+#vp{
+  position:fixed;bottom:1.4rem;right:1.4rem;width:300px;
+  background:#0d0018;border:1px solid rgba(124,58,237,.3);
+  border-radius:10px;box-shadow:0 0 30px rgba(124,58,237,.25);
+  z-index:400;overflow:hidden;display:none;
+  transform:translateY(10px);opacity:0;
   transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s;
 }
-#vid-player.open{display:block;}
-#vid-player.visible{transform:translateY(0);opacity:1;}
-#vid-header{
+#vp.open{display:block;}
+#vp.vis{transform:translateY(0);opacity:1;}
+#vh{
   display:flex;align-items:center;justify-content:space-between;
-  padding:.55rem .85rem;
-  border-bottom:1px solid var(--border);
-  cursor:grab;user-select:none;
-  background:var(--surface2);
+  padding:.45rem .8rem;background:rgba(59,0,117,.4);
+  border-bottom:1px solid rgba(124,58,237,.2);cursor:grab;user-select:none;
 }
-#vid-header:active{cursor:grabbing;}
-#vid-title{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);}
-.vid-btns{display:flex;gap:.25rem;}
-.vid-ctrl{
-  background:none;border:none;color:var(--text-dim);cursor:pointer;
-  font-size:.78rem;padding:.2rem .4rem;border-radius:4px;
-  transition:color .15s,background .15s;line-height:1;
-  font-family:inherit;
-}
-.vid-ctrl:hover{color:var(--white);background:rgba(255,255,255,.06);}
-#vid-el{width:100%;display:block;background:#000;max-height:200px;}
+#vh:active{cursor:grabbing;}
+#vt{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-light);}
+#vc{background:none;border:none;color:var(--purple-light);cursor:pointer;font-size:.8rem;padding:.15rem .35rem;border-radius:3px;}
+#vc:hover{color:var(--white);background:rgba(255,255,255,.06);}
+#ve{width:100%;display:block;background:#000;border-radius:0 0 9px 9px;}
 
-/* ── ARROWS ── */
-.arrow{
-  position:fixed;top:var(--bar-h);
-  height:calc(100vh - var(--bar-h));
-  width:60px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:200;
-  opacity:0;transition:opacity .2s;
-  background:none;border:none;outline:none;
-}
-#arrow-left{left:0;}
-#arrow-right{right:0;}
-.arrow svg{
-  width:28px;height:28px;fill:none;
-  stroke:#ffa400;stroke-width:1.8;
-  filter:drop-shadow(0 0 10px rgba(201,150,58,.5));
-  pointer-events:none;
-  transition:transform .2s;
-}
-.arrow:hover svg{transform:scale(1.15);}
-
-/* ── DOTS ── */
-#indicator{
-  position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);
-  display:flex;gap:.4rem;z-index:200;
-}
-.dot{
-  width:4px;height:4px;border-radius:50%;
-  background:rgba(255,255,255,.15);
-  transition:background .3s,transform .3s,width .3s;
-  cursor:pointer;
-}
-.dot.active{background:#ffa400;transform:scale(1.4);}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeup{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-
-.slide.entered .anim{animation:fadeup .6s both;}
-.slide.entered .anim-1{animation-delay:.1s;}
-.slide.entered .anim-2{animation-delay:.2s;}
-.slide.entered .anim-3{animation-delay:.32s;}
-.slide.entered .anim-4{animation-delay:.44s;}
-.slide.entered .anim-5{animation-delay:.54s;}
-
-/* ── MOBILE ── */
 @media(max-width:640px){
-  .person-slide{grid-template-columns:1fr;grid-template-rows:40vh 1fr;}
-  .photo-half::after{background:linear-gradient(to bottom,transparent 40%,var(--bg) 90%);}
-  .info-half{padding:1.2rem 1.4rem 3.5rem;overflow-y:auto;}
-  .arrow{width:40px;}
-  .am-grid{grid-template-columns:1fr;}
-  .am-grid .am-card:last-child:nth-child(odd){grid-column:auto;}
-  .aboutme-slide{padding:1rem;justify-content:flex-start;overflow-y:auto;height:auto;}
+  .sl-photo{width:100%;height:38vh;position:absolute;top:0;left:0;z-index:0;}
+  .sl-photo::after{background:linear-gradient(to bottom,transparent 40%,var(--bg) 90%);width:100%;height:100%;}
+  .sl-info{margin-top:30vh;padding:1.2rem 1.4rem 3.5rem;background:transparent;}
+  .slide{flex-direction:column;}
+  .q-text{font-size:1.1rem;}
+  .inv-title{font-size:2.5rem;}
 }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div id="topbar">
-  <div class="tb-brand">
-    <span class="tb-title">Digital Album</span>
-    <span class="tb-dot"></span>
-    <span class="tb-sub">Peter · Lima, Perú · 2025</span>
-  </div>
-  <div class="tb-right">
-    <button id="play-btn" onclick="togglePlayer()">
-      <svg id="play-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      <span id="play-label">Play Video</span>
-    </button>
+<div id="bar">
+  <div>
+    <div class="bar-brand">Barranco <em>·</em> Lima</div>
+    <div class="bar-tag">Bohemian District · Peru · 2025</div>
   </div>
 </div>
 
-<!-- SLIDER -->
 <div id="slider">
 
-  <!-- COVER -->
-  <div class="slide" id="slide-0">
-    <div class="cover-noise"></div>
-    <div class="cover-glow"></div>
-    <div class="cover-inner">
-      <p class="cover-tag">Peter · Lima, Perú · 2025</p>
-      <h1 class="cover-title">My<br><em>Digital</em><br>Album</h1>
-      <div class="cover-rule"></div>
+  <!-- 0 · PORTADA -->
+  <div class="slide" id="s0">
+    <div class="cv-orb"></div><div class="cv-orb2"></div>
+    <div class="cv-inner">
+      <p class="cv-eyebrow">Lima, Peru · 2025</p>
+      <h1 class="cv-title">Travel<br><em>Spotlight</em></h1>
+      <div class="cv-line"></div>
+      <p class="cv-sub">The most bohemian and romantic neighborhood in Lima</p>
     </div>
   </div>
 
-  <!-- PETER -->
-  <div class="slide" id="slide-1">
-    <div class="person-slide">
-      <div class="photo-half">
-        <label class="photo-upload-area" for="f-peter">
-          <img class="preview" id="p-peter" src="peter.png">
-          <input type="file" id="f-peter" accept="image/*" onchange="setPhoto(this,'p-peter')">
-        </label>
-      </div>
-      <div class="info-half">
-        <p class="slide-eyebrow anim anim-1">01 / 06</p>
-        <h2 class="p-name anim anim-2">Peter</h2>
-        <p class="p-role anim anim-2">Software Engineering Student</p>
-        <p class="p-bio anim anim-3">Thin build, straight black hair, glasses. Classes Monday through Thursday, English course on Saturdays, and gaming on Sundays.</p>
-        <div class="chips anim anim-4">
-          <span class="chip">👨‍💻 Dev</span>
-          <span class="chip">🗣️ English Sat</span>
-          <span class="chip">🎮 Gamer Sun</span>
-          <span class="chip">🏫 UAP</span>
-        </div>
-      </div>
+  <!-- 1 · DESCRIPCIÓN GENERAL -->
+  <div class="slide" id="s1">
+    <div class="sl-photo">
+      <label for="f1">
+        <img id="i1" src="barranco1.webp" style="display:block">
+      </label>
     </div>
-  </div>
-
-  <!-- PETER — ABOUT ME -->
-  <div class="slide" id="slide-about">
-    <div class="aboutme-slide">
-      <div class="am-header">
-        <p class="slide-eyebrow anim anim-1" style="margin-bottom:.6rem;">About Me</p>
-        <h2 class="anim anim-2" style="font-family:'DM Serif Display',serif;font-size:clamp(2.4rem,5vw,4rem);color:var(--white);line-height:.95;">Peter<span style="color:var(--accent);">.</span></h2>
-      </div>
-      <div class="am-grid">
-        <div class="am-card anim anim-1">
-          <p class="am-label">👋 Presentation</p>
-          <p class="am-text">Hi! My name is Peter. I am 21 years old. I live in Villa El Salvador, Lima, Peru. Welcome to my digital album.</p>
-        </div>
-        <div class="am-card anim anim-2">
-          <p class="am-label">🎓 Studies</p>
-          <div class="chips" style="margin-top:.3rem;">
-            <span class="chip">👨‍💻 Software Engineering</span>
-            <span class="chip">🏫 UAP</span>
-            <span class="chip">🔄 5th Cycle</span>
-          </div>
-        </div>
-        <div class="am-card anim anim-2">
-          <p class="am-label">🧍 Appearance</p>
-          <div class="chips" style="margin-top:.3rem;">
-            <span class="chip">🧍 Thin</span>
-            <span class="chip">🖤 Straight black hair</span>
-            <span class="chip">👓 Glasses</span>
-          </div>
-        </div>
-        <div class="am-card anim anim-3">
-          <p class="am-label">📅 Routine</p>
-          <div class="am-routine">
-            <div class="am-day"><span class="am-day-label">Mon–Thu</span><span class="am-day-val">🏫 Classes</span></div>
-            <div class="am-day"><span class="am-day-label">Fri</span><span class="am-day-val">🔬 Tech research</span></div>
-            <div class="am-day"><span class="am-day-label">Sat</span><span class="am-day-val">🗣️ English course</span></div>
-            <div class="am-day"><span class="am-day-label">Sun</span><span class="am-day-val">🎮 Games & series</span></div>
-          </div>
-        </div>
-        <div class="am-card anim anim-4" style="grid-column:1/-1;">
-          <p class="am-label">🎮 Hobbies</p>
-          <div class="chips" style="margin-top:.3rem;">
-            <span class="chip">🎮 Video games</span><span class="chip">📺 Series</span><span class="chip">💻 Tech research</span>
-            <span class="chip">⭐ Creative</span><span class="chip">🔍 Curious</span><span class="chip">💪 Hardworking</span>
-          </div>
-        </div>
+    <div class="sl-info">
+      <p class="sl-num a a1">01 — Description</p>
+      <h2 class="sl-title a a2">What is<br>Barranco?</h2>
+      <p class="sl-sub a a2">District south of Lima · Near the Pacific</p>
+      <div class="sl-rule a a3"></div>
+      <p class="sl-body a a3">Barranco is the most bohemian and romantic neighborhood in Lima. Its streets are colorful and full of art, with old houses with colorful facades and murals on the walls.</p>
+      <div class="tags a a4">
+        <span class="tag">🎨 Street art</span>
+        <span class="tag">🌊 Next to the Pacific</span>
+        <span class="tag">🏛️ Old architecture</span>
+        <span class="tag">☀️ Mild weather</span>
+        <span class="tag">🌙 Cool at night</span>
       </div>
     </div>
   </div>
 
-  <!-- ANA -->
-  <div class="slide" id="slide-2">
-    <div class="person-slide">
-      <div class="photo-half">
-        <label class="photo-upload-area" for="f-ana">
-          <img class="preview" id="p-ana" src="ana.png">
-          <input type="file" id="f-ana" accept="image/*" onchange="setPhoto(this,'p-ana')">
-        </label>
+  <!-- 2 · LUGARES TURÍSTICOS -->
+  <div class="slide" id="s2">
+    <div class="sl-photo">
+      <label for="f2">
+        <img id="i2" src="barranco2.png" style="display:block">
+      </label>
+    </div>
+    <div class="sl-info">
+      <p class="sl-num a a1">02 — Places & Activities</p>
+      <h2 class="sl-title a a2">What to<br>visit</h2>
+      <p class="sl-sub a a2">The must-sees of the district</p>
+      <div class="sl-rule a a3"></div>
+      <div class="act-list a a3">
+        <div class="act-item"><span class="act-dot"></span>🌉 <strong style="color:var(--white);margin-right:.3rem;">Bridge of Sighs</strong> — the most iconic; make a wish when you cross it.</div>
+        <div class="act-item"><span class="act-dot"></span>🌅 <strong style="color:var(--white);margin-right:.3rem;">The Boardwalk</strong> — a walk by the sea, perfect to watch the sunset.</div>
+        <div class="act-item"><span class="act-dot"></span>🖼️ <strong style="color:var(--white);margin-right:.3rem;">MAC Museum</strong> — modern paintings and sculptures.</div>
+        <div class="act-item"><span class="act-dot"></span>⛪ <strong style="color:var(--white);margin-right:.3rem;">Main Square</strong> — old church, trees and a calm atmosphere.</div>
+        <div class="act-item"><span class="act-dot"></span>🏖️ <strong style="color:var(--white);margin-right:.3rem;">Agua Dulce Beach</strong> — a nearby beach to relax.</div>
       </div>
-      <div class="info-half">
-        <p class="slide-eyebrow anim anim-1">02 / 06</p>
-        <h2 class="p-name anim anim-2">Ana</h2>
-        <p class="p-role anim anim-2">Mother · Nurse</p>
-        <p class="p-bio anim anim-3">Long straight black hair, brown eyes. Works at Hospital San José from Monday to Friday. Saturdays she cooks for the whole family.</p>
-        <div class="chips anim anim-4">
-          <span class="chip">🏥 San José</span>
-          <span class="chip">🍚 Cooks Sat</span>
-          <span class="chip">📺 Soap Operas Sun</span>
-        </div>
+      <div class="tags a a4">
+        <span class="tag">🎵 Live music</span>
+        <span class="tag">🛍️ Handicrafts</span>
+        <span class="tag">📸 Urban murals</span>
       </div>
     </div>
   </div>
 
-  <!-- LUIS -->
-  <div class="slide" id="slide-3">
-    <div class="person-slide">
-      <div class="photo-half">
-        <label class="photo-upload-area" for="f-luis">
-          <img class="preview" id="p-luis" src="luis.png">
-          <input type="file" id="f-luis" accept="image/*" onchange="setPhoto(this,'p-luis')">
-        </label>
-      </div>
-      <div class="info-half">
-        <p class="slide-eyebrow anim anim-1">03 / 06</p>
-        <h2 class="p-name anim anim-2">Luis</h2>
-        <p class="p-role anim anim-2">Father · Security Guard</p>
-        <p class="p-bio anim anim-3">Tall and strong, short black hair with a mustache. Works at a bank Monday through Saturday. Sundays he watches soccer and plays with friends.</p>
-        <div class="chips anim anim-4">
-          <span class="chip">🏦 Bank Guard</span>
-          <span class="chip">⚽ Soccer Sun</span>
-          <span class="chip">💪 Strong</span>
-        </div>
+  <!-- 3 · RUTINAS Y HORARIOS -->
+  <div class="slide" id="s3">
+    <div class="sl-photo">
+      <label for="f3">
+        <img id="i3" src="barranco3.png" style="display:block">
+      </label>
+    </div>
+    <div class="sl-info">
+      <p class="sl-num a a1">03 — Routines</p>
+      <h2 class="sl-title a a2">Neighborhood<br>Schedule</h2>
+      <p class="sl-sub a a2">From morning to late night</p>
+      <div class="sl-rule a a3"></div>
+      <div class="a a3">
+        <div class="fact-row"><span class="fact-label">Museums</span><span class="fact-val">10:00 am — 6:00 pm</span></div>
+        <div class="fact-row"><span class="fact-label">Lunch</span><span class="fact-val">Restaurants open at 12:00 pm</span></div>
+        <div class="fact-row"><span class="fact-label">Dinner</span><span class="fact-val">From 7:00 pm</span></div>
+        <div class="fact-row"><span class="fact-label">Shops</span><span class="fact-val">10:00 am — 8:00 pm</span></div>
+        <div class="fact-row"><span class="fact-label">Bars</span><span class="fact-val">From 8:00 pm</span></div>
+        <div class="fact-row"><span class="fact-label">Weekends</span><span class="fact-val">Families fill the boardwalk all day</span></div>
       </div>
     </div>
   </div>
 
-  <!-- VALENTINA -->
-  <div class="slide" id="slide-4">
-    <div class="person-slide">
-      <div class="photo-half">
-        <label class="photo-upload-area" for="f-valentina">
-          <img class="preview" id="p-valentina" src="valentina.png">
-          <input type="file" id="f-valentina" accept="image/*" onchange="setPhoto(this,'p-valentina')">
-        </label>
+  <!-- 4 · GASTRONOMÍA -->
+  <div class="slide" id="s4">
+    <div class="sl-photo">
+      <label for="f4">
+        <img id="i4" src="barranco4.png" style="display:block">
+      </label>
+    </div>
+    <div class="sl-info">
+      <p class="sl-num a a1">04 — Gastronomy</p>
+      <h2 class="sl-title a a2">Flavors of<br>Barranco</h2>
+      <p class="sl-sub a a2">Traditional food and cafés</p>
+      <div class="sl-rule a a3"></div>
+      <div class="act-list a a3">
+        <div class="act-item"><span class="act-dot"></span>🐟 <strong style="color:var(--white);margin-right:.3rem;">Ceviche</strong> — fresh fish with lemon, chili and onion.</div>
+        <div class="act-item"><span class="act-dot"></span>🍢 <strong style="color:var(--white);margin-right:.3rem;">Anticuchos</strong> — grilled beef heart with potatoes and corn.</div>
+        <div class="act-item"><span class="act-dot"></span>🍮 <strong style="color:var(--white);margin-right:.3rem;">Suspiro a la Limeña</strong> — dessert made with condensed milk and meringue.</div>
+        <div class="act-item"><span class="act-dot"></span>☕ <strong style="color:var(--white);margin-right:.3rem;">Cafés</strong> — cozy places with coffee and pastries for everyone.</div>
       </div>
-      <div class="info-half">
-        <p class="slide-eyebrow anim anim-1">04 / 06</p>
-        <h2 class="p-name anim anim-2">Valentina</h2>
-        <p class="p-role anim anim-2">Sister · 15 years old</p>
-        <p class="p-bio anim anim-3">Long straight brown hair, big brown eyes. School Monday to Friday. On weekends she goes out with her friends.</p>
-        <div class="chips anim anim-4">
-          <span class="chip">🏫 4th Grade</span>
-          <span class="chip">👭 Friends on weekends</span>
-          <span class="chip">🌟 15 yrs</span>
-        </div>
+      <p class="a a4" style="font-size:.75rem;color:var(--purple-light);margin-top:1rem;letter-spacing:.06em;">There are options for all tastes and budgets.</p>
+    </div>
+  </div>
+
+  <!-- 5 · TESTIMONIO -->
+  <div class="slide" id="s5">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(59,0,117,.3) 0%,transparent 65%);pointer-events:none;"></div>
+    <div class="sl-quote">
+      <div class="q-mark a a1">"</div>
+      <p class="q-text a a2">Last year I visited Barranco with my friends. We walked across the Bridge of Sighs and took many photos. Then we ate ceviche at an amazing restaurant. We also visited the Art Museum and saw paintings I will never forget. It was a very beautiful and fun day.</p>
+      <p class="q-attr a a3">05 — Personal Experience · Barranco is a special place</p>
+      <div class="tags a a4" style="justify-content:center;margin-top:1.2rem;">
+        <span class="tag">🌉 Bridge of Sighs</span>
+        <span class="tag">🐟 Ceviche</span>
+        <span class="tag">🖼️ Art Museum</span>
       </div>
     </div>
   </div>
 
-  <!-- CARLOS -->
-  <div class="slide" id="slide-5">
-    <div class="person-slide">
-      <div class="photo-half">
-        <label class="photo-upload-area" for="f-carlos">
-          <img class="preview" id="p-carlos" src="carlos.png">
-          <input type="file" id="f-carlos" accept="image/*" onchange="setPhoto(this,'p-carlos')">
-        </label>
+  <!-- 6 · CÓMO LLEGAR -->
+  <div class="slide" id="s6">
+    <div class="sl-photo">
+      <label for="f6">
+        <img id="i6" src="barranco5.png" style="display:block">
+      </label>
+    </div>
+    <div class="sl-info">
+      <p class="sl-num a a1">06 — How to Get There</p>
+      <h2 class="sl-title a a2">From<br>Miraflores</h2>
+      <p class="sl-sub a a2">On foot · 10 minutes</p>
+      <div class="sl-rule a a3"></div>
+      <div class="a a3">
+        <div class="fact-row"><span class="fact-label">Step 1</span><span class="fact-val">Go straight along Av. Larco heading south.</span></div>
+        <div class="fact-row"><span class="fact-label">Step 2</span><span class="fact-val">Continue to Av. República de Panamá.</span></div>
+        <div class="fact-row"><span class="fact-label">Step 3</span><span class="fact-val">Turn left and walk for 10 minutes.</span></div>
+        <div class="fact-row"><span class="fact-label">Arrival</span><span class="fact-val">Barranco town center, near the Main Square.</span></div>
+        <div class="fact-row"><span class="fact-label">The Bridge</span><span class="fact-val">Two blocks from the Square, next to the church.</span></div>
       </div>
-      <div class="info-half">
-        <p class="slide-eyebrow anim anim-1">05 / 06</p>
-        <h2 class="p-name anim anim-2">Carlos</h2>
-        <p class="p-role anim anim-2">Older Brother · 30 years old</p>
-        <p class="p-bio anim anim-3">Tall, short black hair. Studies psychology and runs his own barbershop. Sundays he plays soccer with Dad.</p>
-        <div class="chips anim anim-4">
-          <span class="chip">🧠 Psychology</span>
-          <span class="chip">✂️ Barbershop</span>
-          <span class="chip">⚽ Soccer Sun</span>
-        </div>
+      <div class="tags a a4" style="margin-top:1.1rem;">
+        <span class="tag">🚶 On foot</span>
+        <span class="tag">🚕 Also by taxi</span>
+        <span class="tag">📍 Villa El Salvador → Barranco</span>
       </div>
     </div>
   </div>
 
-  <!-- JAVIER -->
-  <div class="slide" id="slide-6">
-    <div class="person-slide">
-      <div class="photo-half">
-        <label class="photo-upload-area" for="f-javier">
-          <img class="preview" id="p-javier" src="javier.png">
-          <input type="file" id="f-javier" accept="image/*" onchange="setPhoto(this,'p-javier')">
-        </label>
-      </div>
-      <div class="info-half">
-        <p class="slide-eyebrow anim anim-1">06 / 06</p>
-        <h2 class="p-name anim anim-2">Javier</h2>
-        <p class="p-role anim anim-2">Friend · Civil Engineering</p>
-        <p class="p-bio anim anim-3">Venezuelan, dark-skinned, thin, short black hair. Studies at the same university. Sundays he video-calls his family back home in Venezuela.</p>
-        <div class="chips anim anim-4">
-          <span class="chip">🇻🇪 Caracas</span>
-          <span class="chip">🏗️ Civil Eng</span>
-          <span class="chip">📹 Calls Sun</span>
-        </div>
-      </div>
+  <!-- 7 · INVITACIÓN FINAL -->
+  <div class="slide" id="s7">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(124,58,237,.2) 0%,transparent 65%);pointer-events:none;"></div>
+    <div class="sl-invite">
+      <p class="sl-num a a1" style="text-align:center;margin-bottom:.8rem;">07 — Invitation</p>
+      <h2 class="inv-title a a2">Come to<br><em>Barranco!</em></h2>
+      <div class="cv-line a a3" style="animation:none;opacity:.5;"></div>
+      <p class="inv-body a a4">Barranco is a must-visit destination in Lima: a bohemian, artistic neighborhood full of history, perfect to enjoy alone or with a group.</p>
+      <div class="inv-pill a a5">✨ Enjoy Barranco!</div>
     </div>
   </div>
 
-</div><!-- /slider -->
+</div>
 
 <!-- ARROWS -->
-<button class="arrow" id="arrow-left"  onclick="go(-1)" aria-label="Previous">
+<button class="arrow" id="al" onclick="go(-1)" aria-label="Previous">
   <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
 </button>
-<button class="arrow" id="arrow-right" onclick="go(1)"  aria-label="Next">
+<button class="arrow" id="ar" onclick="go(1)" aria-label="Next">
   <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
 </button>
 
 <!-- DOTS -->
-<div id="indicator"></div>
+<div id="dots"></div>
 
-<!-- FLOATING VIDEO PLAYER -->
-<div id="vid-player">
-  <video id="vid-el" controls playsinline style="width:100%;display:block;background:#000;border-radius:0 0 11px 11px;"></video>
+<!-- FLOATING VIDEO -->
+<div id="vp">
+  <div id="vh">
+    <span id="vt">Video · Barranco</span>
+    <button id="vc" onclick="closeVid()">✕</button>
+  </div>
+  <video id="ve" controls playsinline></video>
 </div>
 
 <script>
-/* ── SLIDER ── */
-const TOTAL = 8;
-let current = 0;
-const slider = document.getElementById('slider');
-const arrowL = document.getElementById('arrow-left');
-const arrowR = document.getElementById('arrow-right');
-const ind    = document.getElementById('indicator');
+const TOTAL=8;
+let cur=0;
+const sl=document.getElementById('slider');
+const al=document.getElementById('al');
+const ar=document.getElementById('ar');
+const dd=document.getElementById('dots');
 
 for(let i=0;i<TOTAL;i++){
   const d=document.createElement('div');
-  d.className='dot'+(i===0?' active':'');
+  d.className='dot'+(i===0?' on':'');
   d.onclick=()=>goTo(i);
-  ind.appendChild(d);
+  dd.appendChild(d);
 }
 
-function getSlide(i){ return slider.children[i]; }
-
-function triggerEnter(i){
-  const sl=getSlide(i);
-  if(!sl)return;
-  sl.classList.remove('entered');
-  void sl.offsetWidth;
-  sl.classList.add('entered');
+function enter(i){
+  const s=sl.children[i];
+  if(!s)return;
+  s.classList.remove('in');
+  void s.offsetWidth;
+  s.classList.add('in');
 }
 
 function goTo(i){
   if(i<0||i>=TOTAL)return;
-  current=i;
-  slider.style.transform=`translateX(-${current*100}vw)`;
-  document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===current));
-  arrowL.style.opacity=current>0?'1':'0';
-  arrowR.style.opacity=current<TOTAL-1?'1':'0';
-  triggerEnter(current);
+  cur=i;
+  sl.style.transform=`translateX(-${cur*100}vw)`;
+  document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('on',j===cur));
+  al.style.opacity=cur>0?'1':'0';
+  ar.style.opacity=cur<TOTAL-1?'1':'0';
+  enter(cur);
 }
-function go(d){goTo(current+d);}
+function go(d){goTo(cur+d);}
 
-arrowL.style.opacity='0';
-arrowR.style.opacity='1';
-triggerEnter(0);
+al.style.opacity='0';
+ar.style.opacity='1';
+enter(0);
 
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')go(1);
   if(e.key==='ArrowLeft')go(-1);
 });
-
 let tx=null;
 document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
 document.addEventListener('touchend',e=>{
@@ -578,80 +522,48 @@ document.addEventListener('touchend',e=>{
   tx=null;
 });
 
-/* ── VIDEO PLAYER ── */
-const vidPlayer = document.getElementById('vid-player');
-const vidEl     = document.getElementById('vid-el');
-const playLabel = document.getElementById('play-label');
-const playIco   = document.getElementById('play-ico');
-let playerOpen  = false;
-const VIDEO_SRC = 'video.mp4';
+/* VIDEO */
+const vp=document.getElementById('vp');
+const ve=document.getElementById('ve');
+const vl=document.getElementById('vl');
+const vi=document.getElementById('vi');
+let vopen=false;
 
-function togglePlayer(){
-  if(playerOpen){ closePlayer(); } else { openPlayer(); }
+function toggleVid(){vopen?closeVid():openVid();}
+function openVid(){
+  vopen=true;
+  ve.src='video.mp4';ve.load();
+  vp.classList.add('open');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>vp.classList.add('vis')));
+  vl.textContent='Hide';
+  vi.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  ve.play().catch(()=>{});
+}
+function closeVid(){
+  vopen=false;ve.pause();ve.src='';ve.load();
+  vp.classList.remove('vis');
+  setTimeout(()=>vp.classList.remove('open'),280);
+  vl.textContent='Watch Video';
+  vi.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
 }
 
-function openPlayer(){
-  playerOpen=true;
-  vidEl.src=VIDEO_SRC;
-  vidEl.load();
-  vidPlayer.classList.add('open');
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{ vidPlayer.classList.add('visible'); });
-  });
-  playLabel.textContent='Hide Video';
-  playIco.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-  vidEl.play().catch(()=>{});
-}
-
-function closePlayer(){
-  playerOpen=false;
-  vidEl.pause();
-  vidEl.src='';
-  vidEl.load();
-  vidPlayer.classList.remove('visible');
-  setTimeout(()=>{ vidPlayer.classList.remove('open'); },300);
-  playLabel.textContent='Play Video';
-  playIco.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-}
-
-/* ── DRAG PLAYER ── */
-let dragging=false,dragOffX=0,dragOffY=0;
-document.getElementById('vid-header').addEventListener('mousedown',e=>{
-  dragging=true;
-  const r=vidPlayer.getBoundingClientRect();
-  dragOffX=e.clientX-r.left;
-  dragOffY=e.clientY-r.top;
-  vidPlayer.style.right='auto';vidPlayer.style.bottom='auto';
+/* DRAG VIDEO */
+let dg=false,ox=0,oy=0;
+document.getElementById('vh').addEventListener('mousedown',e=>{
+  dg=true;const r=vp.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;
+  vp.style.right='auto';vp.style.bottom='auto';
 });
-document.addEventListener('mousemove',e=>{
-  if(!dragging)return;
-  vidPlayer.style.left=(e.clientX-dragOffX)+'px';
-  vidPlayer.style.top=(e.clientY-dragOffY)+'px';
-});
-document.addEventListener('mouseup',()=>{dragging=false;});
-document.getElementById('vid-header').addEventListener('touchstart',e=>{
-  dragging=true;
-  const r=vidPlayer.getBoundingClientRect();
-  dragOffX=e.touches[0].clientX-r.left;
-  dragOffY=e.touches[0].clientY-r.top;
-  vidPlayer.style.right='auto';vidPlayer.style.bottom='auto';
-},{passive:true});
-document.addEventListener('touchmove',e=>{
-  if(!dragging)return;
-  vidPlayer.style.left=(e.touches[0].clientX-dragOffX)+'px';
-  vidPlayer.style.top=(e.touches[0].clientY-dragOffY)+'px';
-},{passive:true});
-document.addEventListener('touchend',()=>{dragging=false;});
+document.addEventListener('mousemove',e=>{if(!dg)return;vp.style.left=(e.clientX-ox)+'px';vp.style.top=(e.clientY-oy)+'px';});
+document.addEventListener('mouseup',()=>dg=false);
 
-/* ── PHOTOS ── */
-function setPhoto(input,pid){
+/* PHOTOS */
+function loadImg(inp,id){
   const r=new FileReader();
   r.onload=ev=>{
-    const img=document.getElementById(pid);
-    img.src=ev.target.result;
-    img.style.display='block';
+    const img=document.getElementById(id);
+    img.src=ev.target.result;img.style.display='block';
   };
-  r.readAsDataURL(input.files[0]);
+  r.readAsDataURL(inp.files[0]);
 }
 </script>
 </body>
